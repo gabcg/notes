@@ -15,21 +15,21 @@ However, despite its success, MD simulations are still limited in two regards:
 	* Over the years have been refined, as this was needed to achieve longer simulation times with larger systems.
 	* They describe the main energy function, but still can have some inaccuracy with certain kinetics.
 	* Note that the stability of a system with time depends on its size: the smaller they are, the longer they can be simulated.
-* High computational cost: it is needed half a year to simulate on the milisecond level, unless a supercomputer is used. 100 μs simulation of a relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing archictecture requires a month of computation to complete.
+* High computational cost: it is needed half a year to simulate on the millisecond level, unless a supercomputer is used. 100 μs simulation of a relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing architecture requires a month of computation to complete.
 
 Biological molecules are known to have rough energy landscapes, with many local minima frequently separated by high-energy barriers, as the following image of a protein folding process shows:
 
 <img src="msi-notes.assets/8.1.png" alt=""
 	title="" width="500"/>
 	
-It making it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations. Replication can be used to escape those minima, but the dificulty increases when the event you want to observe is rare.
+It making it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations. Replication can be used to escape those minima, but the difficulty increases when the event you want to observe is rare.
 
 Also, we are not only interested in the global minimum, but rather in the ones that are biologically functional, as they can be relevant events. Examples of this are:
 
 * More than one pathway to arrive to the same conformation: a main one and other biologically possible ones that are less used. Gathering information about those could be interesting.
 * In case of the transport through membranes, channels and transporters have to undergo large conformational changes in the course of gating substrates.
 
-But sampling those conformational states is difficult because of the high energy barriers, and limits our ability to analyze and reveal functional properties of the systems being examined.
+But sampling those conformational states is difficult because of the high energy barriers, and limits our ability to analyse and reveal functional properties of the systems being examined.
 
 The following image shows one of those states:
 
@@ -41,7 +41,7 @@ In conclusion, escaping local minima is complicated and time consuming, and stra
 <img src="msi-notes.assets/8.3.png" alt=""
 	title="" width="500"/>
 
-> CVs are collective variables. most sampling alg use them  to describe a pathway. an example is "distance of the ends".
+> CVs are collective variables, which are used by most sampling algorithms to describe the progress of a pathway. An example is "distance between the ends".
 
 ### CV-Dependent Methods
 
@@ -61,7 +61,7 @@ In the following image, the green rectangle is a phase space, and the yellow is 
 * It is possible to sample the green it entirely because it is small. This represents how most molecular systems are.
 * Sampling a part of the yellow doesn't allow to arrive to green space, as they are not connected. This applies in cases such as bond breaking. Quantum mechanics allows to define bond breaks, unlike with molecular mechanics.
 
-Note that the big space could be subsetted into smaller spaces to solve the problem, but then it is not a single sample, so it cannot be considered ergotic.
+Note that the big space could be subsetted into smaller spaces to solve the problem, but then it is not a single sample, so it cannot be considered ergodic.
 
 **Procedure of Metadynamics**
 
@@ -80,9 +80,9 @@ As the hills remain in the vale once it has been filled it prevents that it is r
 
 Defining the shape of the hills can be done with big energy values, allowing to get a rough idea of the landscape. To be more accurate, smaller values are used. The bigger the value, the faster a vale is filled.
 
-Convergence in metadynamics is achieved when everything has flattened out, so any hill you add results in staying in the same place. In papers, convergence is demonstrated by showing the last plots of the profile: if they are the same, convergence is achieved. It is also possible that maybe one part has converged and others not. In that case, it would be acceptable to say that there is oconvergence if we are only interested in that part.
+Convergence in metadynamics is achieved when everything has flattened out, so any hill you add results in staying in the same place. In papers, convergence is demonstrated by showing the last plots of the profile: if they are the same, convergence is achieved. It is also possible that maybe one part has converged and others not. In that case, it would be acceptable to say that there is convergence if we are only interested in that part.
 
-The procedure is computationally fast, as 6 ps is nothing, while with unbiased simulations we could never scape the minimimum. At the end, we will have information about the whole energy landscape.
+The procedure is computationally fast, as 6 ps is nothing, while with unbiased simulations we could never scape the minimum. At the end, we will have information about the whole energy landscape.
 
 A [video](https://www.youtube.com/watch?v=IzEBpQ0c8TA) about this.
 
@@ -133,11 +133,11 @@ While metadynamics and umbrella sampling are conceptually similar techniques to 
 * Metadynamics is better suitable for finding reaction pathways. However, potential of mean force (PMF) calculations are highly dependent on input parameters (including the height and width of the Gaussian and !"). The appropriate choice for these parameters is crucial for accurate calculations.
 * Umbrella sampling is useful to calculate accurate PMF. *It allows calculating very accurate energetic landscapes, as you indicate exactly what you want to sample in each simulation.*
 
-A possible strategy would be to use metadynamics to know the pathway and have a general idea, and then pull from here the states we are interested in and do umbrella sampling. An alternative would be to generate artificially the pathway by pulling the ligand out. This can be done manually, but is not as good as you are defining the pathway, and also it doesn't always work, as some ligands first bind a recognision site, and then the actual binding site.
+A possible strategy would be to use metadynamics to know the pathway and have a general idea, and then pull from here the states we are interested in and do umbrella sampling. An alternative would be to generate artificially the pathway by pulling the ligand out. This can be done manually, but is not as good as you are defining the pathway, and also it doesn't always work, as some ligands first bind a recognition site, and then the actual binding site.
 
 ### CV-Free Methods: Replica Exchange
 
-A set of non-interacting replicas runs at different values of an exchange variable, usually temperature (T-REMD), but there are other alternatives (pH, pressure, etc). At specific intervals, replicas at neighboring values for the exchange variable are swapped randomly.
+A set of non-interacting replicas runs at different values of an exchange variable, usually temperature (T-REMD), but there are other alternatives (pH, pressure, etc). At specific intervals, replicas at neighbouring values for the exchange variable are swapped randomly.
 
 <img src="msi-notes.assets/8.12.png" alt=""
 	title="" width="400"/>
@@ -152,14 +152,14 @@ Applications:
 
 * Sampling of different conformational states (e.g protein folding). In protein folding it has been used as a benchmark by comparing how quick and accurately the folding is reproduced.
 * Study of protein protonation states, which might have a role in the protein active conformation.
-* Usage in non-ergotic systems such as ... <!--mdc-->
+* Usage in non-ergodic systems such as ... <!--mdc-->
 
 <img src="msi-notes.assets/8.13.png" alt=""
 	title="" width="250"/>
 
 ### PLUMED
 
-PLUMED is a consortium to provide code for different enanhced sampling approaches for different simulation software. Here is an [explanative video](https://www.youtube.com/watch?v=PxJP16qNCYs) and the [installation procedure](https://www.plumed.org/doc-v2.5/user-doc/html/_installation.html). To incorporate it into GROMACS, a patching procedure is needed.
+PLUMED is a consortium to provide code for different enhanced sampling approaches for different simulation software. Here is an [explanative video](https://www.youtube.com/watch?v=PxJP16qNCYs) and the [installation procedure](https://www.plumed.org/doc-v2.5/user-doc/html/_installation.html). To incorporate it into GROMACS, a patching procedure is needed.
 
 ![](msi-notes.assets/8.14.png)
 
