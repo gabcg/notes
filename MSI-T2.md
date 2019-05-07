@@ -2,120 +2,133 @@
 
 <!--Date: 04/05/2019-->
 
+### Introduction
+
 Computer simulations of biomolecular systems have grown rapidly over the past few decades: from small molecules in vacuum (>20 atoms) to large protein complexes in a solvated lipid bilayer environment (>20000 atoms). 
 
 However, despite its success, MD simulations are still limited in two regards:
 
-* inaccuracy of force fields: *collections of experimental data/ab initio calc of how the sys behaves. It is a simplification. Over the years have been refined (needed to be bc it was needed to long times of simulation: ie helix broke even if it should be stable). They work well for miliseconds in large simulations (the smaller, the longer it can be stable).*
-* high computational cost. *1/2 year to calc miliseconds. There is the pos of supercomputer, but this requires to pay.* 100 μs simulation of a relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing archictecture requires a month of computation to complete.
+* Inaccuracy of force fields: 
+	* Force fields are simplifications based on collections of experimental data and ab initio calculations of how the system behaves.
+	* Over the years have been refined, as this was needed to achieve longer simulation times with larger systems.
+	* They describe the main energy function, but still can have some inaccuracy with certain kinetics.
+	* Note that the stability of a system with time depends on its size: the smaller they are, the longer they can be simulated.
+* High computational cost: it is needed half a year to simulate on the milisecond level, unless a supercomputer is used. 100 μs simulation of a relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing archictecture requires a month of computation to complete.
 
-Biological molecules are known to have rough energy landscapes, with many local minima frequently separated by high-energy barriers, making it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations.
+Biological molecules are known to have rough energy landscapes, with many local minima frequently separated by high-energy barriers, as the following image of a protein folding process shows:
 
-> Local minima surrounded by high barriers, and we can fall into there but they might not be a important state of the molecule. You would need to sim a lot to observe what you want. In 100 replicates maybe yoou only see one time it jumping and seeng the rare event (the more rare, the more diff)
-> 
-> The image shows how the protein folds. To overcome transition states you overcome big barriers tometimes.
-> 
-> Anyway, some local minima can be interesting, maybe they are involved on activation or so, so we are interesting on them. Everything depends on biological importance.
+<img src="msi-notes.assets/8.1.png" alt=""
+	title="" width="500"/>
+	
+It making it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations. Replication can be used to escape those minima, but the dificulty increases when the event you want to observe is rare.
 
-![](msi-notes.assets/8.1.png)
+Also, we are not only interested in the global minimum, but rather in the ones that are biologically functional, as they can be relevant events. Examples of this are:
 
-Such limitations can lead to inadequate sampling of conformational states, which in turn limits the ability to analyze and reveal functional properties of the systems being examined.
+* More than one pathway to arrive to the same conformation: a main one and other biologically possible ones that are less used. Gathering information about those could be interesting.
+* In case of the transport through membranes, channels and transporters have to undergo large conformational changes in the course of gating substrates.
 
-> Here something ab sampling problem. We try to sample the whole conformational state. Also there are pathways on them, maybe one is main and the others are biopossible, but less used.
+But sampling those conformational states is difficult because of the high energy barriers, and limits our ability to analyze and reveal functional properties of the systems being examined.
 
-![](msi-notes.assets/8.2.png)
+The following image shows one of those states:
 
-Large conformational changes are often important for protein activity in biological systems, for example in case of the transport through membranes, channels and transporters have to undergo large conformational changes in the course of gating substrates.
+<img src="msi-notes.assets/8.2.png" alt=""
+	title="" width="500"/>
 
-Such complicated and time consuming processes are commonly beyond the ability of straightforward MD simulations and enhanced sampling algorithms are needed.
-In the past few decades several methods have been developed for this:
+In conclusion, escaping local minima is complicated and time consuming, and straightforward MD simulations cannot handle this. Algorithms that are able to sample conformational states are needed. They are divided in two categories:
 
-![](msi-notes.assets/8.3.png)
+<img src="msi-notes.assets/8.3.png" alt=""
+	title="" width="500"/>
 
-> The most important are the image. They are going to be done in the hands on.CV = collective variable.
-> 
+> CVs are collective variables.
 
-To improve sampling of a system where ergodicity is hindered by the form of the system's energy landscape, Parrinello's group developed an algorithm - metadynamics - that inserts memory in the sampling.
-A. Laio, M. Parrinello, Escaping free-energy minima, Proc. Natl. Acad. Sci. U. S. A. 99 (2002) 12562–12566
+### CV-Dependent Methods
 
-![](msi-notes.assets/8.4.png)
+#### Metadynamics
 
-A process is said to be ergodic if its statistical properties can be deduced from a single, sufficiently long, random sample of the process. *If you sample for instance a small system, if you have enough time you can describe the whole phase space (conformations). Most molecular systems are like this. If you sample a part of the yellow, you never can see the green one, as they are not connected.* 
-*Bond breaking is not observed usually (has to do with ergodicity*
+This method was developed by Parrinello's group in order to improve sampling of systems where ergodicity is hindered by the form of the system's energy landscape. *A. Laio, M. Parrinello, Escaping free-energy minima, Proc. Natl. Acad. Sci. U. S. A. 99 (2002) 12562–12566*
 
-*The green is a phase space as itself*
+A system is ergodic when its statistical properties can be deduced from a single, sufficiently long, random sample of the process. For example, in a small system for which you can describe the whole phase space (its conformations) assuming you have enough time.
 
-*Alda: sample the big space into smaller: but this makes it not be single sample (so is still non-ergotic* Quantum mechanics can define bond breaks, and allows something that this mechanics dont
+In the following image, the green rectangle is a phase space, and the yellow is another:
 
-What does metadynamics do?
+<img src="msi-notes.assets/8.4.png" alt=""
+	title="" width="350"/>
 
-Plot the energy. We see a crys structure crystallised on the local minimum (1st graph)
+* It is possible to sample the green it entirely because it is small. It represents how most molecular systems are.
+* Sampling a part of the yellow doesn't allow to see the green space, as they are not connected.
 
-You define a time in the sim protocol. After certain time is energy. After 3000 integration steps, which are 2 fs.
+Note that the big space could be subsetted into smaller spaces to solve the problem, but then it is not a single sample, so it cannot be considered ergotic.
 
-Hill: the height and its weight. It is a distribution. Its not a line bc cannot.
+*Bond breaking is not observed usually (has to do with ergodicity* Quantum mechanics can define bond breaks, and allows something that this mechanics dont
 
-The thing is that when time passes, we add the hill, which is energy. Potential energy is increased. So it would fall to the minima. What we do is adding more hills to fill the vale, so it cannot go to the bottom. You also know how much energy youre adding. This decreases the barrier.
+Metadynamics **solves the problem** by inserts memory in the sampling. We start by plotting the energy landscape of the system. In the example below we see a structure that was crystallised at a local minimum (1st graph).
 
-This procedure is compp fast. 6 ps is nothing, and with regular (they are named unbiased)simulations you cuold never get out of the minima. The purpose is escaping the free energy minumum. You are not interested just in the global minima, but have the entire energetic landscape.
+<img src="msi-notes.assets/8.5.png" alt=""
+	title="" width="400"/>
 
-Hills are added by changing the energy potential function.
+A time is defined in the sim protocol. *After 3000 integration steps, which are 2 fs.* When this time passes, a hill is inserted by changing the potential energy function. Hills are increases of energy. They are not lines, but rather distributions (we define their height, which defines their energy, and width).
 
-You know the energy you are adding each step, so you can know everything.
+As we a hill, the potential energy is increased. If we added just one, the structure would fall to the minima, so more hills are added until the vale is filled and the structure cannot go to the bottom. The consequence of this is that the energy barrier is decreased.
 
-introducing memory on the system: this means that the hills of one vale are still there, to prevent resampling it.
+The procedure is computationally fast, as 6 ps is nothing, while with unbiased simulations we could never scape the minimim. At the end, we will have information about the whole energy landscape.
 
-> Definition of hills: first the values are big, so you have an idea on how the landscape is. This is rough, then you need more small energy. Height = energy, width is whatever. High energies are not accurate, but give a quick idea.
-> 
+We always have the information on how many hills we are adding and about their shape, so we know how much energy we are adding to the landscape. *I guess this means that we don't end up with a viased landscape*. Also, the hills remain in the vale once it has been filled, preventing that it is resampled. That's why it is said that this method **introduces memory to the system**
+
+How we define the hills? We can start with height big values, in order to get an idea of the landscape. For getting accuracy, smaller values are used.
+
+Convergence in metadynamics is achieved when everything has flattened out, so any hill you add results in staying in the same place. Before min 42.
 
 A [video](https://www.youtube.com/watch?v=IzEBpQ0c8TA) about this.
 
-> When it has converged? That it has flattened out, anything you add, you stay to the same. In real life, she said on audio. Before min 42.
+The following example has two collective variables plotted. a, b and c are different places where an ion can be found.
 
-![](msi-notes.assets/8.5.png)
+<img src="msi-notes.assets/8.6.png" alt=""
+	title="" width="500"/>
 
-Here we see two collective variables plotted. a, b and c are different places where the ion can be found.
+The cause of the high barrier that is observed can be explained with the following image. When energy is added, the ion can pass through because a residue (or atom??) moves.
 
-![](msi-notes.assets/8.6.png)
-
-We still see a high barrier, what is it? We see it in the following image. If you add energy, the ion can pass through bc a residue (or atom??) moves.
-
-![](msi-notes.assets/8.7.png)
+<img src="msi-notes.assets/8.7.png" alt=""
+	title="" width="350"/>
 
 **Summary**
 
 Metadynamics does depend on a low dimensionality of the system in order to produce an accurate description of the free energy surface, therefore using a small set of collective coordinates is essential.
+
 Such characteristics allow this method to be quickly used to provide qualitative information about the overall topology of the free energy surface being examined.
 
-#### Umbrella sampling
+#### Umbrella Sampling
 
-You need to know the pathway. Ie, binding of a small molecule, that moves closer and closer and bind. Each state corresponds to an energy, bound corresponfs to small energy, and unbound is a local minima, but there is a barrier in between.
+In umbrella sampling, the pathway needs to be known beforehand. The following example shows how a molecule moves closer to the other structure, until it binds. Each state corresponds to an energy, where the bound state is the global minimum and the unbound to a local minimum, with a barrier in between.
 
-![](msi-notes.assets/8.8.png)
+<img src="msi-notes.assets/8.8.png" alt=""
+	title="" width="250"/>
 
-As you know the pathway, you start from snapshots of the path. You put energy (or force) to sample around an area. 
+The method starts from snapshots of the pathway, and energy or force is added in order to sample around an area.
 
-![](msi-notes.assets/8.9.png)
+<img src="msi-notes.assets/8.9.png" alt=""
+	title="" width="250"/>
 
-Like that, you just have a small patch of the whole energetic landscape, but with parallelization, you can run diff simulation from different conformations. You make sure that they overlap.
+Like that, you just have a small patch of the whole energetic landscape, but with parallelization, you can run different simulations from different conformations, which need to overlap.
 
-![](msi-notes.assets/8.10.png)
+<img src="msi-notes.assets/8.10.png" alt=""
+	title="" width="250"/>
+	
 
 Once you knwo the landscape, you know the energetic landscape... bef min 53
 
 Drug design: interesting approach.
 
-![](msi-notes.assets/8.11.png)
-
-* Metadynamics and umbrella sampling are conceptually similar techniques to overcome free energy barriers.
-
-* Metadynamics is better suitable for finding reaction pathways however potential of mean force (PMF) calculations are highly dependent on input parameters (including the height and width of the Gaussian and !"). The appropriate choice for these parameters is crucial for accurate calculations.
-	> Umbrella needs the knowledge of pathway, while meta can get one.
-
-* Umbrella sampling is useful to calculate accurate PMF
-	> Calc very accurate energetic landscapes.
+<img src="msi-notes.assets/8.11.png" alt=""
+	title="" width="250"/>
 	
-> We can do meta to know the path, then do umbrella. Other alternative is that 4 ligand binding, you can generate artificially the path by pulling it out. Can be done manually, but not as good. This not always works, there are ligands that first go to a recog site, then to the actual binding site.
+**Comparing Metadynamics and Umbrella Sampling**
+
+While metadynamics and umbrella sampling are conceptually similar techniques to overcome free energy barriers, they have differences:
+
+* Metadynamics is better suitable for finding reaction pathways. However, potential of mean force (PMF) calculations are highly dependent on input parameters (including the height and width of the Gaussian and !"). The appropriate choice for these parameters is crucial for accurate calculations.
+* Umbrella sampling is useful to calculate accurate PMF. *It allows calculating very accurate energetic landscapes.*
+
+A possible strategy would be to use metadynamics to know the pathway, and then do umbrella sampling. An alternative would be to generate artificially the path by pulling the ligand out. This can be done manually, but is not as good, and also it doesn't always work, as some ligands first bind a recognision site, and then the actual binding site.
 
 ### CV-Free Methods: replica exchange
 
