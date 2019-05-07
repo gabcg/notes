@@ -1,4 +1,4 @@
-# MSI Part 2. Beyond Beyond Classical MD
+# MSI Part 2. Beyond Classical MD
 
 ## C8. Enhanced Sampling Techniques
 
