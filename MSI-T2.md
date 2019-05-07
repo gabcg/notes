@@ -15,7 +15,7 @@ However, despite its success, MD simulations are still limited in two regards:
 	* Over the years have been refined, as this was needed to achieve longer simulation times with larger systems.
 	* They describe the main energy function, but still can have some inaccuracy with certain kinetics.
 	* Note that the stability of a system with time depends on its size: the smaller they are, the longer they can be simulated.
-* High computational cost: it is needed half a year to simulate on the millisecond level, unless a supercomputer is used. 100 μs simulation of a relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing architecture requires a month of computation to complete.
+* High computational cost: it is needed half a year to simulate on the millisecond level, unless a supercomputer is used. 100 μs simulation of relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing architecture requires a month of computation to complete.
 
 Biological molecules are known to have rough energy landscapes, with many local minima frequently separated by high-energy barriers, as the following image of a protein folding process shows:
 
