@@ -161,15 +161,3 @@ PLUMED is incorporated into gromacs using the patching procedure:
 
 ![](msi-notes.assets/8.14.png)
 
-
-
-
-
-
-
-![](msi-notes.assets/8.15.png)
-
-![](msi-notes.assets/8.16.png)
-
-![](msi-notes.assets/8.17.png)
-
