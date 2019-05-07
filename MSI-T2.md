@@ -84,7 +84,7 @@ Convergence in metadynamics is achieved when everything has flattened out, so an
 
 The procedure is computationally fast, as 6 ps is nothing, while with unbiased simulations we could never scape the minimum. At the end, we will have information about the whole energy landscape.
 
-A [video](https://www.youtube.com/watch?v=IzEBpQ0c8TA) about this.
+The idea of the process can be seen in the following [video](https://www.youtube.com/watch?v=IzEBpQ0c8TA).
 
 The following example has two collective variables plotted. The entrance of ions is studied: `a`, `b` and `c` are different places where an ion can be found, with energetic barriers between each of them.
 
