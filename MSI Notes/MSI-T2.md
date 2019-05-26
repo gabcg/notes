@@ -176,7 +176,6 @@ PLUMED is a consortium to provide code for different enhanced sampling approache
 
 ![](msi-notes.assets/8.14.png)
 
-## C11. Interactive Steered Molecular Dynamics
 ## C11. Interactive and Steered Molecular Dynamics
 
 As replica exchange requires a recompilation of GROMACS, adding a layer difficulty, we will do steered molecular dynamics (SMD) instead.
