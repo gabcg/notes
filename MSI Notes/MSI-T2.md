@@ -173,3 +173,223 @@ PLUMED is a consortium to provide code for different enhanced sampling approache
 
 ![](msi-notes.assets/8.14.png)
 
+## C11. Interactive Steered Molecular Dynamics
+
+As replica exchange requires a recompilation of GROMACS, adding a layer difficulty, we will do steered molecular dynamics (SMD) instead.
+
+SMD is applied to processes such as the unfolding pathways of proteins. Forces are applied to one side of the molecule, and its behaviour can be analysed. SMD allows the calculations of the **potential of mean force (PMF)** from the trajectories obtained.
+
+Also, with **interactive molecular dynamics (IMD)** we are able to apply the forces to the molecule and see its reaction in real time.
+
+For this class, we will perform the simulation in vacuum so it can be executed in our machines, but this is not how it is done actually. The system we will use is deca-alanine, a peptide composed by ten alanine residues that forms an alpha-helix in vacuum as a stable conformation (top figure), stabilised by six hydrogen bonds. The molecule will be stretched by applying external forces with IMD and SMD: this will make the molecule undergo a gradual conformational change from the alpha-helix to the random coil (bottom figure).
+
+![](msi-notes.assets/11-1.png)
+
+### IMD
+
+The directory contains the following files:
+
+* da.psf: protein structure
+* imd ini.pdb: initial coordinates
+* par all27 prot lipid cmap.prm: CHARMM parameters
+* imd.namd: NAMD configuration
+* imdfixedatoms.pdb: fixed atoms
+
+In the `imd.namd` file we can see the simulation conditions. It defines the atom that will be fixed, by setting to 1 the beta-value of that atom on the pdb file. It also contains settings in order to allow the interactivity: it communicates with VMD through a predefined port.
+
+> The beta value gives an idea on how flexible the side chain is. High values happen with low resolution molecules or areas.
+
+```
+# Fixed Atoms Constraint (set PDB beta-column to 1)
+if {1} {
+fixedAtoms          on
+fixedAtomsFile      imdfixedatoms.pdb
+fixedAtomsCol       B
+}
+
+# IMD Settings (can view sim in VMD)
+if {1} {
+IMDon           on
+IMDport         3000    ;# port number (enter it in VMD)
+IMDfreq         1       ;# send every 1 frame
+IMDwait         yes     ;# wait for VMD to connect before running?
+}
+```
+
+To start, run NAMD:
+
+```
+namd2 imd.namd > da_imd.log &
+```
+
+The simulation will not actually run until the connection between NAMD and VMD is established, so we must execute it:
+
+```
+vmd -e imd.vmd
+```
+
+This line loads the molecule into VMD and shows the ribbon and CPK representations. The alpha carbon of the first residue is colored in orange: that one is the fixed atom.
+
+Next, we go to Extensions > Simulation > IMD Connect (NAMD) and we type localhost as hostname and 3000 as port. When clicking on Connect, the simulation will start.
+
+We can apply forces to stretch the molecule with Mouse > Force > Atom and then click and drag on an atom in the opposite end of the one with the orange atom. A red arrow will appear, which represents the magnitude and direction of the force that is being applied.
+
+We can stretch the molecule to half of its original length. If when it arrives to that point we remove the force (by middle-clicking on the atom to which the force is being applied), we will see how the molecule holds back.
+
+### SMD
+
+IMD is useful to explore the system, but SMD allows a more systematic way to apply forces and analyse the system.
+
+The files needed are:
+
+* da.psf – protein structure
+* smd.namd – NAMD configuration
+* smd.tcl – Tcl script
+* par all27_prot_lipid_cmap.prm – CHARMM parameters
+* smd_ini.pdb – initial coordinates
+
+The `smd.tcl` script contains the external forces that will be applied. It is referenced in the extra parameters section of the `smd.namd` file, where we see a "Tcl interface":
+
+```
+########################
+## EXTRA PARAMETERS   ##
+########################
+
+# Tcl interface
+tclForces           on
+tclForcesScript     smd.tcl
+```
+
+Those external forces design that:
+
+* One end of the molecule (the N atom of the first residue) is constrained to the origin.
+* The other end (the capping N atom at the C-terminus) is constrained to a point that moves along the z-axis from 13 Å to 33 Å with a constant speed of 1 Å/ps.
+* An harmonic potential with a force constant of 7.2 kcal/ (molÅ^2 ) is used for the constraints. <!--Doubt: to a particular atom?-->
+
+In other words, we want the molecule to move from `(0, 0, 13)` to `0, 0, 33` by one A per picosecond, meaning that the full extension will take 20 ps. So we see that what is defined is the end point and the speed to arrive there, not the force itself.
+
+Next, the simulation is run with the following command:
+
+```
+namd2 smd.namd > da_smd.log
+```
+
+The following output files are generated:
+
+* da_smd.log: standard output
+* da_smd.dcd: trajectory
+* da_smd tcl.out: Tcl script output
+
+The next step is to analyse the SMD trajectories with VMD. We have a simulation time of 20 ps, as we wrote each picosecond.
+
+To load the trajectory:
+
+```
+vmd da.psf da_smd.dcd
+```
+
+**Hydrogen Bonds**
+
+The first thing we want to observe is how the hydrogen bonds are broken in the helix-coil transition. We can monitor them with VMD with the following procedure:
+
+* Choose CPK from Drawing Methods
+* Create Rep and select HBonds from Drawing Method
+* Change the parameters to the following:
+	* Distance Cutoff: 4.0
+	* Angle Cutoff: 40
+	* Line Thickness: 10
+
+Then, the timeline tool (Extension > Analysis > Timeline) is used to follow the hydrogen bonding.
+
+**Analysis of the SMD trajectory**
+
+In the Tcl console, we open the Tcl output of the simulation, storing its content in the variable `mytraj`:
+
+```
+set infile [open da_smd_tcl.out
+set mytraj [read $infile]
+close $infile
+```
+
+The file contains three columns: time (in ps), extension (end-to-end distance in Å) and the applied force ((kcal/ (mol Å)). The distance tends to increase, and the force is overall positive. 
+
+The columns need to be asigned to variables to proceed the analysis, which can be done with the following script:
+
+```
+source read.tcl
+```
+
+Then, we define the parameters `v` (pulling velocity) and `dt` (time step of the data, which is stored each 0.1, as seen in the first column):
+
+```
+set v 1
+set dt 0.1
+```
+
+Recall that one end of the molecule was constrained to the origin and the other end was constrained to a moving point. The distance between the two constraints was changed from 13 Å to 33 Å with the constant velocity `v`.
+
+Then, an array `c` is created to represent the distance between the two constraint points at each time step:
+
+```
+set c {}
+set i 13
+while {$i < 33.1} {lappend c $i; set i [expr $i + $v * $dt]}
+```
+
+We want to plot two things:
+
+* Time `t` vs extension `z`.
+* Time `t` vs distance between the two constraint points `c`.
+
+This is fone with the multiplot plugin of VMD, by typing in the console:
+
+```
+package require multiplot
+set plot1 [multiplot -x $t -y $z -plot]
+$plot1 add $t $c -plot
+```
+
+Here, we observe two lines: one is a straight line, which represents the distance between the two constraint points, and the other is the actual extension. This is the pulling velocity and how the molecule adapted to the force, and it usually lags behinf the straight line. This is due to the fact that before it reaches that distance, the next force is applied. By decreaing the speed, we would give more time to the molecule to reach that arget value (as what we define are speeds, not forces).
+
+There are times where the force actually moves the molecule past the value of distance we wanted for that timestep. Then, the system tries to adapt by applying a negative force, so it goes back.
+
+We can see the force that is being applied each time with the force-extension curve, where the x axis is the extension (from start 13 to end 33) and the y axis is the force:
+
+```
+set plot2 [multiplot -x $z -y $f -plot]
+```
+
+Both plots can be compared, as we see that when the extension/constraint curve is above the target, the force in the force curve is negative.
+
+**Potential of Mean Force (PMF) calculation**
+
+The work done on the system during the pulling simulation is:
+
+Where `v` is the pulling velocity.
+
+The work can be calculated with the followinf Tcl script by numerical integration, which will store the work in a list with variable name `w`:
+
+```
+source calcwork1.tcl
+```
+
+If a pulling simulation is performed very slowly, then the process is reversible. The work done during such a reversible pulling is equal to the free energy difference of the system between initial and final states:
+
+Jarzynski’s equality (Wikipedia):
+
+In thermodynamics, the free energy difference $\Delta F = F_B - F_A$ between two states A and B is connected to the work W done on the system through the inequality: $\Delta F \leq W$, with equality when one takes the system from A to B infinitely slowly (such that all intermediate states are in thermodynamic equilibrium).
+
+The exact PMF obtained from a reversible pulling is stored in the file `Fexact.dat`. Read the content of the file, and store it in a variable called `Fexact`, by running the follwong Tcl script:
+
+```tcl
+source load-Fexact.tcl
+```
+
+This array contains two columns: the extension and the PMF, respectively. We can plot `W` vs `c` in blue, with `Fexact` in red:
+
+```tcl
+set plot3 [multiplot -x $c -y $w -linecolor blue -plot]
+$plot3 add $Fexact(1) $Fexact(2) -linecolor red -plot
+```
+
+The trajectory used is not practical for the PMF calculation, as the pulling speed was too high. It could be reduced to 0.01 Å/ps.
