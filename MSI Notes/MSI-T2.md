@@ -9,6 +9,9 @@
     * [CV\-Free Methods: Replica Exchange](#cv-free-methods-replica-exchange)
     * [PLUMED](#plumed)
   * [C10\. Umbrella Sampling Simulations](#c10-umbrella-sampling-simulations)
+  * [C11\. Interactive Steered Molecular Dynamics](#c11-interactive-steered-molecular-dynamics)
+    * [IMD](#imd)
+    * [SMD](#smd)
 
 ## C8. Enhanced Sampling Techniques
 
