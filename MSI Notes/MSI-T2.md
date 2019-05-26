@@ -9,7 +9,7 @@
     * [CV\-Free Methods: Replica Exchange](#cv-free-methods-replica-exchange)
     * [PLUMED](#plumed)
   * [C10\. Umbrella Sampling Simulations](#c10-umbrella-sampling-simulations)
-  * [C11\. Interactive Steered Molecular Dynamics](#c11-interactive-steered-molecular-dynamics)
+  * [C11\. Interactive and Steered Molecular Dynamics](#c11-interactive-and-steered-molecular-dynamics)
     * [IMD](#imd)
     * [SMD](#smd)
 
@@ -177,6 +177,7 @@ PLUMED is a consortium to provide code for different enhanced sampling approache
 ![](msi-notes.assets/8.14.png)
 
 ## C11. Interactive Steered Molecular Dynamics
+## C11. Interactive and Steered Molecular Dynamics
 
 As replica exchange requires a recompilation of GROMACS, adding a layer difficulty, we will do steered molecular dynamics (SMD) instead.
 
@@ -186,7 +187,7 @@ Also, with **interactive molecular dynamics (IMD)** we are able to apply the for
 
 For this class, we will perform the simulation in vacuum so it can be executed in our machines, but this is not how it is done actually. The system we will use is deca-alanine, a peptide composed by ten alanine residues that forms an alpha-helix in vacuum as a stable conformation (top figure), stabilised by six hydrogen bonds. The molecule will be stretched by applying external forces with IMD and SMD: this will make the molecule undergo a gradual conformational change from the alpha-helix to the random coil (bottom figure).
 
-![](msi-notes.assets/11-1.png)
+![](msi-notes.assets/11.1.png)
 
 ### IMD
 
