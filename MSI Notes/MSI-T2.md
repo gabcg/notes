@@ -176,6 +176,61 @@ PLUMED is a consortium to provide code for different enhanced sampling approache
 
 ![](msi-notes.assets/8.14.png)
 
+## C10. Umbrella Sampling Simulations
+
+<!--Date: 16/05/2019-->
+
+Most trajectories are not ergodic. 
+
+Steered MD is needed in most cases for umbrella sampling.
+
+Sampling time issue
+
+Unbiased collective variables don't touch the energies.
+
+In umbrella, the energy is untouched. Allows to estimate free energy.
+
+The initial trajectory is to separate the dimer and do the sampling along the separation.
+
+gmx make_ndx init.gro
+
+We create the groups of the protein and kill ourselves he keeps repeating something about dopamine receptors.
+
+Use the gro file, the index file from the previous step, `A2A.ndx` is the output, and then use cat to merge both indexes.
+
+
+At some point he does 14 | 15 | 16 to make whatever groups.
+
+He does a pulling that makes sense.
+
+Set up US windows
+
+Use gmx dist to compute distance per configuration (doing like a for loop, he has a script somewhere in the folder).
+
+End up deciding which windows you will use (slide 15). Not trivial, you have to play around
+
+It doesnt matter if we have different energies in the windows, as when we finish we remove the bias.
+
+S21
+
+We are applying the bias in 
+
+S24 Here we make an histogram of each window bc yes.
+
+bsResult has a low energy, the dimer, as it is the most stable conformation. We can change the orientation of the dimer in order to see how this profile changes.
+
+bsProfs is used for another stuff. we see that is has converged. It doesnt converge if the fat part is lower, but i don't get why. This is the attempt of the bootstrapping i think.
+
+bsresult shows error, if the error is big, then we should sample that window for longer in a publication, the name is `profileX.xvg`.
+
+the pmf is the real one
+
+
+name BB "SC*:"
+resname DSCP
+
+both as points, make them bigger, etc
+
 ## C11. Interactive and Steered Molecular Dynamics
 
 As replica exchange requires a recompilation of GROMACS, adding a layer difficulty, we will do steered molecular dynamics (SMD) instead.
@@ -309,7 +364,7 @@ Then, the timeline tool (Extension > Analysis > Timeline) is used to follow the 
 In the Tcl console, we open the Tcl output of the simulation, storing its content in the variable `mytraj`:
 
 ```
-set infile [open da_smd_tcl.out
+set infile [open da_smd_tcl.out]
 set mytraj [read $infile]
 close $infile
 ```
