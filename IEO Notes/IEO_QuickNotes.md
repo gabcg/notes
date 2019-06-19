@@ -1,4 +1,7 @@
-# Information Extraction from Omics
+# Information Extraction from OMICS Technologies
+
+* [Quality Assessment and Normalization of RNA\-seq Data](#quality-assessment-and-normalization-of-rna-seq-data)
+* [Experimental Design and Batch Effect Identification](#experimental-design-and-batch-effect-identification)
 
 ## Quality Assessment and Normalization of RNA-seq Data
 
