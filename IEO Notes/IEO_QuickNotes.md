@@ -5,6 +5,8 @@
 * [Differential Expression Analysis (I)](#differential-expression-analysis-i)
 * [Differential Expression Analysis (II)](#differential-expression-analysis-ii)
 * [Differential Expression Analysis (III)](#differential-expression-analysis-iii)
+* [Pulling Functional Annotations with R/BioC](#pulling-functional-annotations-with-rbioc)
+* [Reproducible Research](#reproducible-research)
 
 ## Quality Assessment and Normalization of RNA-seq Data
 
@@ -182,4 +184,50 @@ Block design allows to identify and correct batch.
 
 * The outcome of interest has two or more factors.
 * A factor from the combination of the factors can be used.
+
+## Pulling Functional Annotations with R/BioC
+
+* Functional annotations: descriptions of biological activity of structure elements of the genome and features profiled with HT platoforms.
+* In this slides: what is reported on databases on the role of the sequence.
+* They go from molecular mechanisms to high-level phenotypes.
+* Varying coverage among organisms. Dynamic nature.
+
+**Gene-centric packages**
+
+* Categorized into groups (chip annotations, organism annotations or genome centric annotations).
+
+**Genome-centric**
+
+* Functional annotations mapped to genomic coordinates.
+* Types:
+	* Exon-level or transcript level.
+	* SNP locations
+* Usage cases:
+	* Extracting genome-wide coordinates of the protein-coding sequence (CDS) of genes and their corresponding nucleotide sequences.
+	* Retrieving promoter regions of genes.
+	* Select genes overlapping regions of interest such as those mapped by short-reads.
+
+**Other access**
+
+* Packages discussed before do not contain all possible information.
+* Other packages allow access to complete databases (UCSC Genome Browser, Biomart).
+
+## Reproducible Research
+
+* While funding in genomics increases, it doesn’t mean that results are proportional.
+* Ten years ago, reproducibility started to be a concern.
+* Lack of reproducibility can come from unclear methods or unavailable software.
+* Methodological quality of scientific experiments does not increase with increasing rank of the journal.
+* Retractions:
+	* Public statement about an earlier statement which amends or cancels the original one.
+	* Retractions are still small, but they increase exponentially, correlating positively with the impact factor.
+	* Most retractions are due to misconduct.
+* Known cases have been spotted after some “unrelated” information came, but they could have been spotted earlier if the code and exact steps were released with the publication.
+* **Reproducibility:** start from the same samples/data, use the same methods, get the same results.
+	* Always feasible with computationally-oriented research.
+* **Replicability:** using different data, get confirmatory results.
+	* It is a sum of replicability and conducting the experiment again.
+	* It might be challenging in epidemiology (recruit again a cohort) or molecular biology (complex cell manipulation).
+		* For this reason, reproducibility is the minimum standard.
+* Reproducibility is not only about the data, but also about having software and specifically those particular versions) available. That is why cloud computing and Docker are important.
 
