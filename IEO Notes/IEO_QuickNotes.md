@@ -2,6 +2,9 @@
 
 * [Quality Assessment and Normalization of RNA\-seq Data](#quality-assessment-and-normalization-of-rna-seq-data)
 * [Experimental Design and Batch Effect Identification](#experimental-design-and-batch-effect-identification)
+* [Differential Expression Analysis (I)](#differential-expression-analysis-i)
+* [Differential Expression Analysis (II)](#differential-expression-analysis-ii)
+* [Differential Expression Analysis (III)](#differential-expression-analysis-iii)
 
 ## Quality Assessment and Normalization of RNA-seq Data
 
@@ -62,4 +65,29 @@ Block design allows to identify and correct batch.
 		* ComBat: empirical Bayes method robust to outliers in small sample sizes.
 		* QR decomposition: requires a batch indicator.
 		* SVD: very agressive, decomposes the gene expression matrix and removes the largest variability (assumes it is the batch).
+
+## Differential Expression Analysis (I)
+
+* Differential expression is performed by comparing levels of gene expression between two conditions (male-female, healthy-disease, etc).
+* Start from normalized data.
+* We will have an outcome of interest (the conditions we want to compare, but experimental design variables might be a blocking factor. We should see if those are balanced in our outcome of interest).
+* Stabilize the variance with base 2 logarithms. It can be further stabilized.
+* Basic DE comparison: gene by gene between the conditions.
+	* For each sample in a group, take the mean of all the counts of each gene.
+	* Means between groups are compared, obtaining the fold-change (base 2 logarithmic scale).
+	* Then, we can get a list of the most differentially expressed genes by ranking them by the absolute value of log2 fold changes.
+* A problem comes: maybe some of those genes are not DE. We need to verify them. There are two options:
+	* Use an independent assay (costs money).
+	* Replicate: have different replicates per condition and use statistical inference.
+
+* Null hypothesis: no difference in expression for the population means.
+* Test the hypotheses with a t-statistic, in which we compare the differences between group means with the differences within the group.
+* The null hypothesis can be wrongly accepted or rejected. When performing multiple tests, the probability of rejecting the null hypothesis increases, even if it is true. So multiple testing corrections are applied:
+	* Bonferroni: really conservative, 
+	* FDR
+	* Non-specific filtering: discarding genes using a criterion that is independent of the test statistic (genes not likely to be DE, or genes with no biological interest). This allows to reduce the number of multiple tests. Examples of criteria are absence of functional annotation or low expression levels.
+
+## Differential Expression Analysis (II)
+
+## Differential Expression Analysis (III)
 
