@@ -79,8 +79,6 @@ Block design allows to identify and correct batch.
 * A problem comes: maybe some of those genes are not DE. We need to verify them. There are two options:
 	* Use an independent assay (costs money).
 	* Replicate: have different replicates per condition and use statistical inference.
-
-
 * Statistical significance of fold changes derives from variability of expression values within each condition.
 * Null hypothesis: no difference in expression for the population means.
 * Test the hypotheses with a t-statistic, in which we compare the differences between group means with the differences within the group.
@@ -147,4 +145,41 @@ Block design allows to identify and correct batch.
 * Gold-standard subset of genes with documented differential expression can help to tune the analysis. This subset, however, is most of the times not available
 
 ## Differential Expression Analysis (III)
+
+**Other issues to address**
+
+* Mean-variance relationship in log-transformed counts from RNA-seq data (voom).
+* Adjust for repeated measurements.
+* Factorial and paired designs.
+
+**Mean-variance relationship**
+
+* Identical CPM values for different count sizes happen because:
+	* RNA-seq counts vary from sample to sample for the same gene.
+	* Different samples can be sequenced to different depths.
+* This relationship is incorporated to the model:
+	* `limma-trend`
+	* `limma-voom`
+* If the library size is similar, their precision and recall is similar. When it is similar, `voom` is superior to `trend`.
+
+**Adjusting for repeated measurements**
+
+* Repeated measurements lead to overly low p-values and false positive calls.
+* Adjusting for this keeps the statistical power.
+* This would be easier to adjust if all individuals were sequenced twice.
+* Existence of duplicates can be checked from the cell-line phenotypic information.
+* Strategies:
+	* Averaging replicates.
+	* Including a replicated indicator as a main effect.
+	* Using a linear mixed-effects model.
+
+**Paired measurements**
+
+* Add the individual identifier to the design matrix.
+* Samples without pair can be discarded or apply the repeated measurements strategy.
+
+**Factorial designs**
+
+* The outcome of interest has two or more factors.
+* A factor from the combination of the factors can be used.
 
