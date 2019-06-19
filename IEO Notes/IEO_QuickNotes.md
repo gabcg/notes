@@ -7,6 +7,7 @@
 * [Differential Expression Analysis (III)](#differential-expression-analysis-iii)
 * [Pulling Functional Annotations with R/BioC](#pulling-functional-annotations-with-rbioc)
 * [Reproducible Research](#reproducible-research)
+* [Analysis of Metabolomics Data](#analysis-of-metabolomics-data)
 
 ## Quality Assessment and Normalization of RNA-seq Data
 
@@ -231,3 +232,96 @@ Block design allows to identify and correct batch.
 		* For this reason, reproducibility is the minimum standard.
 * Reproducibility is not only about the data, but also about having software and specifically those particular versions) available. That is why cloud computing and Docker are important.
 
+## Analysis of Metabolomics Data
+
+**Introduction**
+
+* Genomics talks tells what could happen.
+* Transcriptomics tells what appears to happen.
+* Metabolomics tells what makes it to happen.
+* Metabolomics tells what has happened.
+
+**Definition**
+
+* Metabolites are low weight chemical products used by organisms to sustain life.
+* Metabolomics studies them. Two types:
+	* Targeted, for known metabolites.
+	* Untargeted: metabolite profiling.
+* The metabolome is the phenotype of a cell. It can be used:
+	* To find biomarkers.
+	* To understand diseases.
+	* To predict the outcome of a treatment.
+
+**Procedure**
+
+* An HPLC system uses solvents to load the sample, which goes through a chromatography column to separate them.
+	* Time taken to travel trhough the column: retention time.
+	* Peak intensities are relative to the abundance of each compound.
+* Once separated, a mass spectometer ionizes the compounds to obtain its mass/charge ratio.
+	*  Peak intensities relative to the abundance of each compound.
+* Final signal:
+	* Combines intensity, mass/charge and retention time for each observed peak.
+	* Sparse matrix.
+	* Anisotropic behaviour.
+
+**Analysis workflow**
+
+* For untargeted studies:
+	1. Peak Detection: highly dependent on the parameters of the wavelet.
+	2. Peak Annotation.
+	3. Peak Alignment:
+		* Samples show temporal drifts.
+	4. Data Normalisation.
+		* There are intensity drift effects.
+		* Instrumental factors can change the output (batch effects, column change).
+		* Chromatographic columns get old.
+	5. Statistical Analysis.
+		* Unsupervised methods: PCA and hierarchical clustering.
+		* Supervised methods: PLSDA, SVM, Random Forest.
+		* Univariate statistical tests +multiple test correction are not effective: statistical power decreases because there are many more variables than samples.
+	6. Metabolite Identification.
+	7. Functional Interpretation and Pathway Analysis
+
+**Functional enrichment**
+
+* Relate the experimental data with biological pathways to provide biological context.
+* Database annotations can be automatically generated from literature mining, manually curated or a mixed approach.
+* Gene ontology: three ontologies and a hierarchical structure reflecting the specificity of the entry.
+* UniProt: protein sequence and annotation data.
+* STRING: protein-protein interaction database; automatic and curated annotations
+* KEGG: comprehensive and curated pathway database.
+* Reactome, BioCyc, WikiPathways, SMPDB.
+* Enrichment is needed for functional analysis.
+	* Over representation analysis:
+		* DE genes are computed.
+		* Assess if the number of affected genes in a particular pathway is higher than expected by chance.
+* GSEA: takes advantage on quantitative data about gene expression.
+* Network-based methods take into account the topological features of biological networks in order to test pathways.
+* Metabolomics is younger, so enrichment  concepts come from genomics and transcriptomics.
+	* Background for statistical test is not obvious. Most of the metabolome is unknown.
+	* Experimental devices can have low sensitivity and noisy signals.
+	* No technology to measure the full spectrum of compounds. Large part of the background is not observable.
+
+**Subnetwork analysis**
+
+* Extracting subnetworks (modules) from biological structures can give insights of the affected mechanisms in the condition under inspection.
+* Two approaches:
+	* Signigicant Area Search:
+		* Score nodes, assess an agregate score of subnetworks and build the optimal ones.
+	* Difussion processes: Nodes known to be affected introduce flow to the network. Then, maximum flow subnetworks are found.
+
+**More concepts**
+
+* Pathway enrichment techinques bridge between metabolic pathways and LC/MS data.
+* This also allows further integration with other omics.
+* Relevant parts of graphs are found by applying heat to certain nodes. Then, hottest subgraphs can be analyzed.
+	* Temperatures cannot be compared between nodes, and they are not explicative by themselves.
+	* Null models are used to analyse the distribution of temperatures for random cases to be able to compare the temperatures.
+		* The technology does not allow to measure all compounds from a database, so not all nodes can me measured. A portion of nodes introduces uncertainty.  
+		* The model is splitted in two:
+			* Observable pool: nodes that can be measured.
+			* Latent pool: nodes that cannot be measured.    
+		* We want to see how the presence of the latent pool modifies our statistical tests.
+		* By introducing the latent pool all the variances grow. The magnitude of this enlargement will assess how sensitive a particular node is to experimental uncertainty. 
+
+	
