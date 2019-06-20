@@ -7,6 +7,9 @@
 * [Differential Expression Analysis (III)](#differential-expression-analysis-iii)
 * [Pulling Functional Annotations with R/BioC](#pulling-functional-annotations-with-rbioc)
 * [Reproducible Research](#reproducible-research)
+* [Functional Enrichment](#functional-enrichment)
+* [GSEA and GSVA](#gsea-and-gsva)
+* [QA, Mapping & Summarization of HTS Reads](#qa-mapping--summarization-of-hts-reads)
 * [Analysis of Metabolomics Data](#analysis-of-metabolomics-data)
 
 ## Quality Assessment and Normalization of RNA-seq Data
@@ -232,6 +235,110 @@ Block design allows to identify and correct batch.
 		* For this reason, reproducibility is the minimum standard.
 * Reproducibility is not only about the data, but also about having software and specifically those particular versions) available. That is why cloud computing and Docker are important.
 
+## Functional Enrichment
+
+* Functional enrichment is used with DE genes to study the molecular processes they are involved.
+* Biological pathway: series of actions among molecules in a cell that leads to certain product.
+* Genes act collectively under finely tuned molecular regulatory programs.
+* DE pathways can be searched within those that are defined (databases such as Reactome or KEGG).
+* Pathways can be defined as gene sets, which can be obtained from Gene Ontology or MSigDB.
+* Some pathway definitions don't include the ones of interest, which requires manual curation or inference.
+* Pathways can be already seen visually (volcano plots), but it is possible to obtain them statistically.
+* DE pathways can be found by functional enrichment:
+	* Search DE genes.
+	* For each set, see how many of the DE genes are there.
+		* The set is enriched if it contains more DE genes than the expected by pure chance.
+		* A hypergeometric test (Fisher's exact test) can be applied.
+* Fisher's exact test:
+	* Null hypothesis: a gene set does not include more DE genes than the expected by chance.
+	* Gene universe: all considered genes.
+	* The number of DE genes follows an hypergeometric distribution under the null hypothesis.
+	* This test is used in the analysis of contingency tables that result from cross-classifying objects by two factors (in this case, membership to a set and DE status).
+	* The lower the p-value the less consistent with chance observing those k genes.
+* Gene Ontology (GO) analysis: apply the one-tailed Fisher's exact test to every gene set in the GO database.
+	* All terms belong to three ontologies.
+	* Terms are related to each other by parent-child relationships (from general to specific). 
+	* GO terms are annotated to genes
+* GO analysis with `GOstats`:
+	* Parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use.
+	* Run the functional enrichment analysis.
+	* Store and visualize results.
+* GO analysis can have redundancy because it is hierarchical and some genes can be in the parent and child terms.
+	* Conditional testing solves this: the child term is considered more relevant.
+* Finally, terms with few or a lot of genes are not informative, so it is better to filter them out.
+
+## GSEA and GSVA
+
+* Classical FE based on Fisher's exact tests require a list of DE genes.
+* In some contexts, this list is too small or no significant DE genes exist.
+* This doesn't mean that there aren't molecular mechanisms changed: maybe genes change little but coordinately.
+* GSEA adresses this: it looks for differential expression at the gene level.
+	* There are multiple methods based on this idea.
+* Main concepts:
+	* An enrichment score is calculated for each gene set as function of the changes in gene expression of the genes forming the set.
+* Data is prepared by loading molecular data and gene sets to one object.
+* Simple GSEA is parametric. It has a distribution of t-statistics that is approximately normal. This allows to calculate a z-score.
+* Higher Z-score: higher enrichment.
+* As the z-scores follow a normal distribution, a z-test can be done by calculating p-values. Multiple tests adjustmen is needed because of gene set overlaps.
+* We can also calculate the gene set overlap.
+* With z-scores, sometimes the shift inmean expression can be cancelled out when half the genes are up and half are down. Chi2 is adequate to detect this (it is called change in scale).
+	* For gene sets > 20 genes the chi2 follows a normal distribution.
+
+**GSVA**
+
+* There are different types of GSEA approaches:
+	* Tested null hypothesis:
+		* Competitive: involves genes in and out the set.
+		* Self-contained: only genes in the set.
+	* ES calculated using phenotypes or not:
+		* Supervised: uses phenotypes.
+		* Unsupervised: doesn't use phenotypes.
+	* Units quantifies by ES:
+		* Entire smple population: ES tells something about a gene set and the entire dataset.
+		* Single sample: ES tells something about a gene set and an individual sample.
+* GSVA: unsupervised and single sample. Non parametric, with a competitive-like approach.
+* Allows pathway-centric analyses of gene expression
+
+**Conclusions**
+
+* GSEA detects small but consistent changes in expression within gene sets and facilitate the interpretability of results.
+* Simple GSEA: allows one to detect shifts in mean expression and changes in scale. It assumes, however, that genes are expressed independently.
+* Non-specific filtering methods for gene sets are pretty much limited to constraining their minimum and maximum size. Other strategies that could remove irrelevant gene set definitions upfront would likely decrease false positive calls and increase statistical power.
+
+## QA, Mapping & Summarization of HTS Reads
+
+* HTS instrument produce sequencing reads.
+	* Those are raw data.
+	* Discrete nature (opposed to continuous fluorescence from microarrays).
+	* Prone to technical variability and biases.
+		* Some a re unknown, as the technology evolves.
+	* Stored in FASTQ, with quality encoded in ASCII characters (platform-specific meanings).
+	* Quality value: integer mapping of the probability of the base call being incorrect. Current standard: Phred.
+	* QA is needed to filter out low-quality reads or reads that are not useful.
+* Possible QA diagnostics:
+	* Nucleotide distribution throuhg all reads independently at each cycle.
+		* Obtain the numbers of each nucleotide for each cicle and divide by the total nucleotides of that cycle.
+	* Mean quality per cycle.
+		* Coherce quality scores to a matrix of integers.
+	* Average quality distribution per read (using a random sample of reads).
+	* Filter out low quality reads. Filter by distance to some specific reads by obtaining the distribution of distances to decide a cutoff.
+* Read mapping:
+	* Align them to a reference genome. Specific tools exist for short reads.
+	* BWA: used to call variants from aligned reads of DNA-seq experiments.
+	* STAR: to obtain expression profiles from aligned reads of RNA-seq experiments.
+	* Formats: SAM is the *de facto* standard. BAM is its binary representation.
+* Summarization into features of interest (exons, transcripts, genes):
+	* Approaches: 
+		* Count reads falling into knownfeatures.
+		* Assemble reads to identify novel features and count reads per feature again.
+	* `GenomicFeatures` and `GenomicAlignments` packages. 
+	* Starting point: BAM files.
+	* Annotations are needed to summarize by counting.
+	* Overlaps are summarized and a `SummarizedExperiment` object is returned.
+	* There are different strategies for the summarization if a read does not map an entire feature: union, intersection strict and intersection non-empty.
+
+
+
 ## Analysis of Metabolomics Data
 
 **Introduction**
@@ -322,6 +429,7 @@ Block design allows to identify and correct batch.
 			* Observable pool: nodes that can be measured.
 			* Latent pool: nodes that cannot be measured.    
 		* We want to see how the presence of the latent pool modifies our statistical tests.
-		* By introducing the latent pool all the variances grow. The magnitude of this enlargement will assess how sensitive a particular node is to experimental uncertainty. 
+		* By introducing the latent pool all the variances grow. The magnitude of this enlargement will assess how sensitive a particular node is to experimental uncertainty.
+
 
 	
