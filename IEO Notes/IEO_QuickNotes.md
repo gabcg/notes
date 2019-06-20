@@ -11,6 +11,7 @@
 * [GSEA and GSVA](#gsea-and-gsva)
 * [QA, Mapping & Summarization of HTS Reads](#qa-mapping--summarization-of-hts-reads)
 * [Analysis of Metabolomics Data](#analysis-of-metabolomics-data)
+* [Variant Calling from DNA\-seq Data](#variant-calling-from-dna-seq-data)
 
 ## Quality Assessment and Normalization of RNA-seq Data
 
@@ -431,5 +432,41 @@ Block design allows to identify and correct batch.
 		* We want to see how the presence of the latent pool modifies our statistical tests.
 		* By introducing the latent pool all the variances grow. The magnitude of this enlargement will assess how sensitive a particular node is to experimental uncertainty.
 
+## Variant Calling from DNA-seq Data
+
+* Used to identify nucleotide variability in the population (DNA variants).
+* More comprehensive than microarray SNP.
+* There is uncertainty in what is a real variant or not.
+* It is deciding if in that position the nucleotide is actually different between the individual genome/transcriptome and the reference.
+* Clues on molecular and higher order phenotypes, depending on the assay:
+	* DNA-seq: germline and somatic variants
+		* Germline variants associated with disease.
+		* Somatic variants associated with cancer.
+		* Cataloguing population variability.
+	* RNA-seq: allele-specific expression.
+		* Allelic imbalance
+		* Association with isoform usage.
+		* RNA editing
+	* ChIP-seq: allele-specific binding.
+* Different tools for different purposes (some take assumptions, such as ploidy).
+* Starting point: BAM file (normally mapped with bwa in humans).
+* samtools and bcftools:
+	* A first step is to tally nucleotides by position. This results in the pileup format:
+		* Position, reference nucleotide, number of reads mapped and the nucleotide of each read (sense/antisense, letters with differences). Finally, quality.
+		* There should be both forward and reverse alignment, as the variant should be in both strands without showing preference (enrichment).
+		* Pileup format is inefficient, it needs to be binary.
+	* BCF files are binary files that take different BAM files and that are passed to the variant caller.
+	* VCF format is the end one. It can be indexed ith tabix.
+	* Diagnostics: transitions to transversions ratio. Should be equal or larger than 2.
+* GATK:
+	* Steps:
+		* Run the haplotype caller on each BAM file to generate a so-called GVCF (.g.vcf) file, for each of them.
+			* This step can go in parallel to accelerate. 
+		* Run the joint genotyper on all the previously generated GVCF files to obtain a final output VCF file.
+* After obtaining a VCF, it can be explored and annotated.
+*  
+    
+
+## Multi-omic Data Analysis
 
 	
