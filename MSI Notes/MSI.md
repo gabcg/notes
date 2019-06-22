@@ -93,17 +93,20 @@
 
 * Coordinator: [Jana Selent](mailto:jana.selent@upf.edu)
 
-**Some Links and Useful Information**
+**Some Links**
 
 * [gmx_tutorials](https://github.com/jalemkul/gmx_tutorials_livecoms/blob/master/gmx_tutorials.pdf): it consists on the tutorials we use for GROMACS, but in a paper-like PDF.
 * [Tutorial on VMD](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2972669/figure/F2/): there is also a PDF version, but all the figures appear at the end, which is inconvenient.
 * [Salt Bridges Plugin, Version 1.1](https://www.ks.uiuc.edu/Research/vmd/plugins/saltbr/)
 * [VMD Script Library](http://www.ks.uiuc.edu/Research/vmd/script_library/)
 
+**Useful Information**
+
 * To view the boundaries of a box, open VMD tcl console and type `pbc box`.
 
 Part 1. Classical Unbiased MD
------------------------------
+=============================
+
 
 ## 1. Introduction to Molecular Dynamics Simulations
 
