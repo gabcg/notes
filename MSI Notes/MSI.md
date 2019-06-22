@@ -203,7 +203,9 @@ In the example, it is not very preferred and A would be high.
 
 ![](msi-notes.assets/C1-7_summary-energy.png)
 
-**Types of Force Field**
+### Molecular Simulations Algorithms and Definitions
+
+#### Types of Force Field
 
 Force fields contain parameters of the energies we have seen and potential energy functions, which enable molecular mechanics calculations.
 
@@ -218,50 +220,101 @@ In a CHARMM36 force field, we can observe:
 * It finishes with comments, which defines the origin of the information contained in the force field.
 
 
-----------------
-Slide 29
+#### Scheme of the Algorithm
 
-* Newton's law is done iteratively.
-* First problem:
-* phase space: 
-* The highest is the h bonds. We can fix them to speed up the process.
-* From a doubt: In the simulation, you dont really fix H from side chain and backbone (but you can if you add more restraints).   
+* The solvation of $E_{tot}$ is the computationally most expensive step of a simulation.
+* A molecular simulation can be seen as the computation of the behaviour of a molecular system as a function of time.
+* Newton's laws of motions are solved in a simulation, concretely the second ($F=ma$). This is done iteratively.
+* A time step $\Delta t$ needs to be chosen. The larger it is, the faster the simulation.
+* It is desirable to choose a small $\Delta t$, but it is problematic.
+	* The integration step is limited by the highest frequency motions: the vibration of hydrogen bonds (typically 0.5 fs).
+	* Constraining those bonds can speed up the simulations to 2 fs.
+	* Biomolecular system with constraints on all bond lengths: 4 to 5 fs.
+	* From a doubt:iIn the simulation, you don't really fix H from side chain and the backbone (but you can if you add more restraints).
+* After choosing the initial position of atoms and $\Delta t$: get acting force.
+* Then, the atom acceletation. 
+* The next step is to move the atoms, calculating velocities. Those are also dependent on the temperature (which is present in the formula).
+	* *It seems that for some parts, the velocity is assigned randomly* 
+* Finally, the time is moved forward and the procedure is repeated.
 
-* In a first step, calculare whatever and get acting force.
-* Then, acceleration.
-* Then you cal calc velocity. Then you know where it will be in 2 femto. The assign of velocity in some stuff is assigned randomly? and it depends on the temperature of the simulation: temperature is reflected in the vel.
-* Theb, move time forward and repeat as long as you need.
+![](msi-notes.assets/C1-8_summary-md-alg.png)
 
-* Leap-frog: velocity is calc ar a time, and as 1/2 the vel is calculated in between (so it is a reference of a medium).
-* In the below explain, positions r at time t is actially delta t (typo).
+> The number of iterations for 1 μs is = 500 x 10^6. *I guess this is with the 2 fs timestep.* Special purpose computers such as Anton allow to simulate big systems during long times.
 
-### Simulation env
+#### Integration Algorithms
 
-* Water atoms are more realistic. Vacuum is unrealistic.
-* Some approaches put dielectric constants of solvents to solve it, but its not as good as having water.
-* Water models have been created.
-	* Vibration is kind of stiff.
-	* TIP:
-	* SPC: 
-	* They try to build a model with the properties below.
+The leap-frog algorithm and the velocity Verlet integrator are present in most molecular dynamics software. Both algorithms produce identical trajectories when used without speciall additional features:
 
-**TIP models**
+**Leap-frog algorithm**
 
-------
+In this algorithm, the position is called $r$, and is defined at time $t$. The velocity is calculated between each time ($t-1/2\Delta t$).
 
-How much water do we need?
+Positions and velocities are updated using the forces $F(t)$ determined by the positions at time $t$.
 
-More 'space' requires more computation.
+![](msi-notes.assets/C1-9_leap-frog-1.png)
+![](msi-notes.assets/C1-10_leap-frog-2.png)
+ 
+**The velocity Verlet integrator**
 
-I dont understand periodic boundary conditions.
+In this case, positions $r$, velocities $v$ and forces $F(t)$ are determined at time $t$
 
-You set up a kind of box. It doesnt take the time, just the space into account.
+![](msi-notes.assets/C1-11_verlet.png)
 
-**Short and long range inter**
+*Probably "time t" is actually "time delta t" for both cases*
 
-Electro inter have a long range.
+### Simulation Environment and Water models
 
-The slide with a graph that seems like vdw is of the non-bonded interactions.At some point you put a cutoff that you dont want to calculate whatever anymore.
+#### Solvent and Water Models
+
+Simulating in vacuum is unrealistic: a solvent is needed. Some approaches put dielectric constants of solvents to solve the molecular system, but its not as good as having water.
+
+Different water models have been created. Parameters are defined to reproduce the properties of water at room temperature and atmospheric pressure. The most widely used are rigid (its vibration is stiff).
+
+**Transferable Interaction Potential (TIP)**
+
+TIP3P: TIP model with 3 interaction sites centred on the atomic nuclei. Positive partial charges on the hydrogen atoms and negative on the oxygen.
+
+TIP4P: TIP model with 4 interaction sites. The negative charge is moved 0.015 nm off the oxygen towards the hydrogens along the bisector of the HOH angle. Slightly better than TIP3P, but computationally more expensive.
+
+**Simple Point Charge (SPC)**
+
+As TIP, it is a series of models. All of them have 3 interaction sites centred on the atomic nuclei. Positive partial charges on the hydrogens and negative on the oxygen.
+
+SPC with C6 Lennard-Jones parameters on the hydrogen atoms. The best model with three sites within the TIP and SPC families.
+
+**Model Election**
+
+The water model can be chosen independently of the biomolecular force field, but often this is not a good idea:
+
+* AMBER, CHARMM, and OPLS protein force fields have been parameterised with TIP3P.
+* The GROMOS protein force field has been parameterised with SPC.
+
+#### Periodic Boundary Conditions
+
+Periodic boundary conditions are related with the amount of water to use. Adding more water requires volume, increasing the computation time.
+
+One solution for this is the creation of identical virtual unit cells. The atoms in the surrounding virtual system interact with atoms in the real system.
+
+These modeling conditions allow to eliminate the surface interaction of the water molecules, and the representation they create is more similar to the *in vivo* environment that a water sphere surrounded by vacuum.
+
+### Other
+
+#### Short and Long Range Interactions
+
+The electrostatic forces are separated in two groups: short and long range. They are summed in Fourier space.
+
+![](msi-notes.assets/C1-12_sri-1.png)
+
+The particle-mesh-Ewald (PME) methos is the most used to resolve long range electrostatics:
+
+* Cutoff: 12 Å (after this cutoff, calculations are not performed anymore?)
+* Switching distance: 10 Å
+
+![](msi-notes.assets/C1-13_sri-2.png)
+
+#### Temperature
+
+Temperature is an experimental condition that needs to be reproduced. It can be assumed as kinetic energy, and control of it is needed as velocity is lost due tu cutoffs.
 
 -----
 
