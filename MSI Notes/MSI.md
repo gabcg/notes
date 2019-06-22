@@ -5,12 +5,31 @@
 * [Part 1\. Classical Unbiased MD](#part-1-classical-unbiased-md)
 * [Molecular Simulations](#molecular-simulations-1)
   * [1\. Introduction to Molecular Dynamics Simulations](#1-introduction-to-molecular-dynamics-simulations)
-    * [1\.1 Timescales](#11-timescales)
-  * [1\.2 Protein Motion](#12-protein-motion)
-  * [1\.3 Molecular Mechanics](#13-molecular-mechanics)
-    * [Types of Energy](#types-of-energy)
-    * [Simulation env](#simulation-env)
-    * [Typical MD Simulation](#typical-md-simulation)
+    * [1\. Introductory Concepts](#1-introductory-concepts)
+      * [1\.1 Timescales](#11-timescales)
+      * [1\.2 Protein Motion](#12-protein-motion)
+    * [2\. Molecular Mechanics](#2-molecular-mechanics)
+      * [2\.1 Types of Energy](#21-types-of-energy)
+        * [Stretching Energy](#stretching-energy)
+        * [Bending Energy](#bending-energy)
+        * [Torsion Energy](#torsion-energy)
+        * [Non\-Bonded Energy](#non-bonded-energy)
+        * [Summary](#summary)
+    * [3\. Molecular Simulations Algorithms and Definitions](#3-molecular-simulations-algorithms-and-definitions)
+      * [3\.1 Types of Force Field](#31-types-of-force-field)
+      * [3\.2 Scheme of the Algorithm](#32-scheme-of-the-algorithm)
+      * [3\.3 Integration Algorithms](#33-integration-algorithms)
+      * [3\.4 Simulation Environment and Water Models](#34-simulation-environment-and-water-models)
+        * [Solvent and Water Models](#solvent-and-water-models)
+      * [3\.4 Periodic Boundary Conditions](#34-periodic-boundary-conditions)
+      * [3\.6 Short and Long Range Interactions](#36-short-and-long-range-interactions)
+      * [3\.7 Temperature](#37-temperature)
+      * [3\.8 Pressure and Chemical Potential](#38-pressure-and-chemical-potential)
+      * [3\.9 Ensembles](#39-ensembles)
+    * [4\. Typical MD Simulation](#4-typical-md-simulation)
+      * [4\.1 Steps](#41-steps)
+      * [4\.2 Programs](#42-programs)
+      * [4\.3 Limitations](#43-limitations)
   * [2\. VMD](#2-vmd)
     * [Visualization and Basic Analysis of Simulations](#visualization-and-basic-analysis-of-simulations)
       * [Representations](#representations)
@@ -83,15 +102,14 @@
 
 * To view the boundaries of a box, open VMD tcl console and type `pbc box`.
 
-# Part 1. Classical Unbiased MD
-
-# Molecular Simulations
-
-
+Part 1. Classical Unbiased MD
+-----------------------------
 
 ## 1. Introduction to Molecular Dynamics Simulations
 
 > Date: 02/04/2019
+
+### 1. Introductory Concepts
 
 Molecular simulations can be considered as a virtual microscope with high temporal and spacial resolution, that complements conventional experiments.
 
@@ -103,7 +121,7 @@ They allow studying complex, dynamic processes occuring in biological systems, s
 * Molecular recognition: proteins, DNA, membranes, complexes.
 * Ion transport in biological systems.
 
-### 1.1 Timescales
+#### 1.1 Timescales
 
 Different processes occur in different time scales:
 
@@ -115,26 +133,29 @@ Depending on the size of the system or the computing power, different timescales
 
 To arrive to the scale of seconds, we can wait for technological advances or use advanced algorithms.
 
-## 1.2 Protein Motion
+#### 1.2 Protein Motion
 
 In proteins, bond vibration happens in picoseconds to nanoseconds, while an helix movement can happen in miliseconds to seconds.
 
 We can consider a protein conformation as a snapshot in a single point of time, but proteins are dynamic and change from one conformation to other. Some of those cluster in zones of similar conformations, called **conformational states**. Typically, we can consider active, inactive and intermediate conformational states.
 
-![](msi-notes.assets/C1-1_conformational-states.png)
+<img src="msi-notes.assets/C1-1_conformational-states.png" alt=""
+	title="" width="300"/>
 
 To perform a molecular simulation, it is important to use good experimental data:
 
 * Crystallography allows a good resolution, and shows the average of a given conformational state.
 * Spectroscopy (NMR/fluorescence): resolution-wise, small proteins offer a good resolution with this technique, while big proteins do not behave so well. As an advantage, it allows to see different structures (even if they are just changes of an inserted chemical probe).
 
-## 1.3 Molecular Mechanics
+### 2. Molecular Mechanics
 
 Molecular mechanics is a computational method to calculate geometries and energies.
 
 Systems are simplified in order to perform the calculations with larger molecules. An example of this is that atoms are treated as rubber balls of different size (atom types) joined together by springs of varying length.
 
-![](msi-notes.assets/C1-2_atoms.png)
+<img src="msi-notes.assets/C1-2_atoms.png" alt=""
+	title="" width="150"/>
+
 
 Molecular mechanics enables the calculation of the total steric energy in terms of deviations from reference “unstrained” bond length angles and torsions plus non-bonded interaction (VdW, electrostatic):
 
@@ -142,9 +163,9 @@ $$
 E_{tot} = E_{str} + E_{bend} + E_{tor} + E_{elec} + E_{vdb} + ... 
 $$
 
-### Types of Energy
+#### 2.1 Types of Energy
 
-**Stretching Energy**
+##### Stretching Energy
 
 * It consists on a sum of the energy of each bond.
 * There are two parameters that are assigned to each pair of bonded atoms based on their type (e.g. C-C, C-H):
@@ -152,9 +173,10 @@ $$
 	* $r_0$: it comes from experiments such as nature, crystallography, ab initio; or from quantum mechanics calculations. It is collected in the force field file.
 * High differences between $r$ and $r_0$ increase the energy.
 
-![](msi-notes.assets/C1-3_stretching-energy.png)
+<img src="msi-notes.assets/C1-3_stretching-energy.png" alt=""
+	title="" width="400"/>
 
-**Bending Energy**
+##### Bending Energy
 
 * The equation estimates the energy associated with the vibration about the equilibrium bond angle.
 * In this case, parameters are assigned to triplets of atoms, based on their type.
@@ -163,9 +185,10 @@ $$
 
 <!--The reference is still in the force field.-->
 
-![](msi-notes.assets/C1-4_bending-energy.png)
+<img src="msi-notes.assets/C1-4_bending-energy.png" alt=""
+	title="" width="400"/>
 
-**Torsion Energy**
+##### Torsion Energy
 
 * Torsion energy can be considered as how one part rotates in reference to the other.
 * It corrects the other energy terms, rather than representing a physical process. It makes the total energy agree with the experiment.
@@ -175,11 +198,12 @@ $$
 	* ɸ: shifts the entire curve along the rotation angle axis $\tau$.
 * It is modeled by a simple periodic function, which has this form because rotation can keep happening.
 
-![](msi-notes.assets/C1-5_torsion-energy.png)
+<img src="msi-notes.assets/C1-5_torsion-energy.png" alt=""
+	title="" width="400"/>
 
 In the example, it is not very preferred and A would be high.
 
-**Non-Bonded Energy**
+##### Non-Bonded Energy
 
 * It is the combination of two terms: van der Waals and electrostatic.
 * In both terms, $r_{ij}$ represents radius.
@@ -195,17 +219,19 @@ In the example, it is not very preferred and A would be high.
 	* It is approximated by a Coulomb potential.
 	* It is a function of the charge of each atom ($q_i$ and $q_j$), their interatomic distance ($r_{ij}$) and a molecular dielectric expression that accounts for the attenuation of electrostatic interaction by the environment (such as the solvent or the molecule itself).
 
-![](msi-notes.assets/C1-6_non-bonded-energy.png)
+<img src="msi-notes.assets/C1-6_non-bonded-energy.png" alt=""
+	title="" width="400"/>
 
 * Sum: in long distances they dont feel each other.
 
-**Summary**
+##### Summary
 
-![](msi-notes.assets/C1-7_summary-energy.png)
+<img src="msi-notes.assets/C1-7_summary-energy.png" alt=""
+	title="" width="400"/>
 
-### Molecular Simulations Algorithms and Definitions
+### 3. Molecular Simulations Algorithms and Definitions
 
-#### Types of Force Field
+#### 3.1 Types of Force Field
 
 Force fields contain parameters of the energies we have seen and potential energy functions, which enable molecular mechanics calculations.
 
@@ -219,8 +245,7 @@ In a CHARMM36 force field, we can observe:
 * Angle definition and spring constants for angles (three atoms).
 * It finishes with comments, which defines the origin of the information contained in the force field.
 
-
-#### Scheme of the Algorithm
+#### 3.2 Scheme of the Algorithm
 
 * The solvation of $E_{tot}$ is the computationally most expensive step of a simulation.
 * A molecular simulation can be seen as the computation of the behaviour of a molecular system as a function of time.
@@ -237,11 +262,13 @@ In a CHARMM36 force field, we can observe:
 	* *It seems that for some parts, the velocity is assigned randomly* 
 * Finally, the time is moved forward and the procedure is repeated.
 
-![](msi-notes.assets/C1-8_summary-md-alg.png)
+
+<img src="msi-notes.assets/C1-8_summary-md-alg.png" alt=""
+	title="" width="450"/>
 
 > The number of iterations for 1 μs is = 500 x 10^6. *I guess this is with the 2 fs timestep.* Special purpose computers such as Anton allow to simulate big systems during long times.
 
-#### Integration Algorithms
+#### 3.3 Integration Algorithms
 
 The leap-frog algorithm and the velocity Verlet integrator are present in most molecular dynamics software. Both algorithms produce identical trajectories when used without speciall additional features:
 
@@ -251,20 +278,27 @@ In this algorithm, the position is called $r$, and is defined at time $t$. The v
 
 Positions and velocities are updated using the forces $F(t)$ determined by the positions at time $t$.
 
-![](msi-notes.assets/C1-9_leap-frog-1.png)
-![](msi-notes.assets/C1-10_leap-frog-2.png)
+C1-8_summary-md-alg
+
+<img src="msi-notes.assets/C1-9_leap-frog-1.png" alt=""
+	title="" width="250"/>
+
+<img src="msi-notes.assets/C1-10_leap-frog-2.png" alt=""
+	title="" width="250"/>
  
 **The velocity Verlet integrator**
 
 In this case, positions $r$, velocities $v$ and forces $F(t)$ are determined at time $t$
 
-![](msi-notes.assets/C1-11_verlet.png)
+<img src="msi-notes.assets/C1-11_verlet.png" alt=""
+	title="" width="300"/>
+
 
 *Probably "time t" is actually "time delta t" for both cases*
 
-### Simulation Environment and Water models
+#### 3.4 Simulation Environment and Water Models
 
-#### Solvent and Water Models
+##### Solvent and Water Models
 
 Simulating in vacuum is unrealistic: a solvent is needed. Some approaches put dielectric constants of solvents to solve the molecular system, but its not as good as having water.
 
@@ -289,7 +323,7 @@ The water model can be chosen independently of the biomolecular force field, but
 * AMBER, CHARMM, and OPLS protein force fields have been parameterised with TIP3P.
 * The GROMOS protein force field has been parameterised with SPC.
 
-#### Periodic Boundary Conditions
+#### 3.4 Periodic Boundary Conditions
 
 Periodic boundary conditions are related with the amount of water to use. Adding more water requires volume, increasing the computation time.
 
@@ -297,60 +331,90 @@ One solution for this is the creation of identical virtual unit cells. The atoms
 
 These modeling conditions allow to eliminate the surface interaction of the water molecules, and the representation they create is more similar to the *in vivo* environment that a water sphere surrounded by vacuum.
 
-### Other
-
-#### Short and Long Range Interactions
+#### 3.6 Short and Long Range Interactions
 
 The electrostatic forces are separated in two groups: short and long range. They are summed in Fourier space.
 
-![](msi-notes.assets/C1-12_sri-1.png)
+<img src="msi-notes.assets/C1-12_sri-1.png" alt=""
+	title="" width="250"/>
 
 The particle-mesh-Ewald (PME) methos is the most used to resolve long range electrostatics:
 
 * Cutoff: 12 Å (after this cutoff, calculations are not performed anymore?)
 * Switching distance: 10 Å
 
-![](msi-notes.assets/C1-13_sri-2.png)
+<img src="msi-notes.assets/C1-13_sri-2.png" alt=""
+	title="" width="400"/>
+	
+#### 3.7 Temperature
 
-#### Temperature
+Temperature is an experimental condition that needs to be reproduced. It can be assumed as kinetic energy, and control of it is needed as velocity is lost due to cutoffs.
 
-Temperature is an experimental condition that needs to be reproduced. It can be assumed as kinetic energy, and control of it is needed as velocity is lost due tu cutoffs.
+Control of the temperature is done by adding a thermostat. Some types are:
 
------
+* Berendsen thermostat (weak coupling).
+* Nosé-Hoover thermostat (extended-system Hamiltonian).
+* Andersen thermostat (stochastic coupling). Not present in all simulation software.
+* Langevin dynamics
 
-Andersen thermostat is not in all simulation software.
+#### 3.8 Pressure and Chemical Potential
 
-**Control for pressure and chem poteintial**
+Pressure can be controled by adjusting the cell size (big cells mean lower pressures and viceversa). The following barostats are used:
 
-Controlled by size of cell. Higher pressure: small cell.
+* Berendsen barostat (weak coupling).
+* Parrinello-Rahman barostat and variants (extended-system Hamiltonian).
 
-Chem potential: add/rem particles.
+Regarding the chemical potential, it can be reproduced by adding or removing particles.
 
------
+#### 3.9 Ensembles
 
-Limitations
+Ensembles keep some parameters fixed. As a summary, the canonical ensemble has a termostat, and the isobaric also a barostat.
 
-* Ensembles: you keep some param fixed.
-* Canonical Ensemble has a thermostat.
-* Isobaric also has the barostat.
+**Microcanonical Ensemble (NVE)**
 
-### Typical MD Simulation
+The thermodynamic state characterized by a fixed number of atoms, $N$, a fixed volume $V$ and a fixed energy $E$. This corresponds to an isolated system.
 
-* get a PDB struc.
-* As side chains are flex, some dont appear. Add them.
-* Protonation states: things can be protonated or deprotonated. Asp can have or not an hydrogen. Compute if there should be a proton or not, depending to the environment and side chain position.
-* Simulation files: add solvents, take right parameters.
-* Energy min: optimize geometry.
-* Equilibration: to get right box size.
-* Run production sim
+**Canonical Ensemble (NVT)**
 
+Collection of all systems whose thermodynamic state is characterized by a fixed number of atoms, $N$, a fixed volume $V$ and a fixed temperature $T$.
 
-ACEMD is commercial but really fast. Runs on GPUs (better parallelization).
-GROMACS has also a GPU version. We will use it as it is open source.
+**Isobaric-isothermal Ensemble (NPT)**
+
+Characterized by afixed number of atoms, $N$, a fixed pressure $P$ and a fixed temperature $T$.
+
+### 4. Typical MD Simulation
+
+#### 4.1 Steps 
+
+A molecular dynamics simulation involves a series of steps.
+
+1. Get a protein structure (for example, from PDB).
+2. Fix missing segments, side chains and define protonation states. 
+	* Some side chains do not appear because they are flexible and are not captured when the structure is being defined.
+	* With respect to the protonation state, amino acids can be protonated or not depending on the environment, so it cas to be calculated if some side chains should be protonated or not.
+3. Prepare input files: add the solvent, corresponding ions and choose the right parameters.
+4. Energy minimization: geometry is optimized here.
+5. Equilibration simulation: allows getting the right box size?
+6. Run production simulation.
+7. Analyze the output trajectory.
+
+#### 4.2 Programs
+
+There are different programs, with advantages and disadvantages. It is recommended to stick to one or two and learn them in detail, as they have a lot of options. The choosen algorithms needs to be justified when publishing.
+
+ACEMD is a commercial program, but it is really fast, as it runs on GPUs. This allows good parallelization. GROMACS is an open source alternative which also has a GPU version it allows molecular dynamics simulations and energy minimization.
+
+#### 4.3 Limitations
+
+* Parameter definition for the simulation is not perfect, so it can always be further refined.
+* Limited polarization effects; waters can reorient but partial charges are fixed.
+* The phase space is not sampled exhaustively.
+
+Also, seeing a single in a simulation does not mean it is relevant: when it is observed more than once it can be considered significant.
 
 ## 2. VMD
 
-<!--Date: 04/04/2019-->
+> Date: 04/04/2019
 
 ### Visualization and Basic Analysis of Simulations
 
