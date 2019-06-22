@@ -1396,7 +1396,8 @@ We use [CHARMM-GUI](http://www.charmm-gui.org/?doc=input) to set up the simulati
 
 When using CHARMM-GUI, the following steps are followed:
 
-![](msi-notes.assets/5.1.png)
+<img src="msi-notes.assets/5.1.png" alt=""
+	title="" width="200"/>
 
 #### Step 0: Structure Preparation
 
@@ -1420,15 +1421,18 @@ We load the new file and observe it:
 
 So the chain A, after loading, will look like this:
 
-![](msi-notes.assets/5.3.png)
+<img src="msi-notes.assets/5.3.png" alt=""
+	title="" width="400"/>
 
 It still contains the T4 lysozime (introduced into the receptor to facilitate crystallisation).
 
 In order to remove it, we use again Tk, but first we need to know which residues are the lysozime and with the chain. The residue IDs can be checked with the Sequence Viewer. In it, we can see how the residue number goes from 221 to 1002 suddently: that is the lysozyme. *Prot goes *
 
-![](msi-notes.assets/5.4.png)
+<img src="msi-notes.assets/5.4.png" alt=""
+	title="" width="500"/>
 
-![](msi-notes.assets/5.5.png)
+<img src="msi-notes.assets/5.5.png" alt=""
+	title="" width="500"/>
 
 The selection is done with:
 
@@ -1442,7 +1446,8 @@ $sel writepdb 3pbl_chainA_cut.pdb
 
 The resulting structure is shown in the image, but if we create a VDW representatin with "not protein" as selection, we will see small molecules:
 
-![](msi-notes.assets/5.6.png)
+<img src="msi-notes.assets/5.6.png" alt=""
+	title="" width="400"/>
 
 Those need to be removed:
 
@@ -1468,7 +1473,8 @@ $sel writepdb 3pbl_chainA_final.pdb
 
 Result:
 
-![](msi-notes.assets/5.7.png)
+<img src="msi-notes.assets/5.7.png" alt=""
+	title="" width="400"/>
 
 ### Simulation Setup
 
@@ -1476,9 +1482,11 @@ Result:
 
 The procedure starts by going to the CHARMM-GUI membrane builder and uploading the structure. Then it will allow to select the chains (not selected by default, make sure that both A and B are selected).
 
-![](msi-notes.assets/5.charmm-1.png)
-
-![](msi-notes.assets/5.charmm-2.png)
+<img src="msi-notes.assets/5.charmm-1.png" alt=""
+	title="" width="400"/>
+	
+<img src="msi-notes.assets/5.charmm-2.png" alt=""
+	title="" width="350"/>
 
 **PDB Manipulation**
 
@@ -1492,9 +1500,11 @@ The disulfide bonds need to be identified. To know where they are, we go back to
 
 If we remove the rest of representations, we will see that some cysteines are together: those are the bonds. We can select the atoms to see the residue ID.
 
-![](msi-notes.assets/5.charmm-3.png)
+<img src="msi-notes.assets/5.charmm-3.png" alt=""
+	title="" width="400"/>
 
-![](msi-notes.assets/5.charmm-4.png)
+<img src="msi-notes.assets/5.charmm-4.png" alt=""
+	title="" width="300"/>
 
 **Generate PDB and Orient Molecule**
 
@@ -1504,7 +1514,8 @@ In the case of GPCRs, we use "Align the First Principal Axis Along Z".
 
 Lastly, the D3R has a pore were small ligands bind. This has to be filled with water. We do it with the option *Using protein geometry*.
 
-![](msi-notes.assets/5.charmm-5.png)
+<img src="msi-notes.assets/5.charmm-5.png" alt=""
+	title="" width="500"/>
 
 <!--min 41.-->
 
@@ -1516,9 +1527,11 @@ When the calculation is performed, two plots and some characteristics are return
 * Protein Bot Area: 1139.70367
 * Pore Minimum Radius: 0
 
-![](msi-notes.assets/5.charmm-pore.png)
+<img src="msi-notes.assets/5.charmm-pore.png" alt=""
+	title="" width="400"/>
 
-![](msi-notes.assets/5.charmm-cross.png)
+<img src="msi-notes.assets/5.charmm-cross.png" alt=""
+	title="" width="400"/>
 
 **System Size Determination**
 
@@ -1532,15 +1545,18 @@ Next, there is a table with lipids, wich contains lipid types. The upperleaflet 
 
 Finally, we click on the "Show the system info" button. With that information, we can know if the system is to small.
 
-![](msi-notes.assets/5.charmm-6.png)
+<img src="msi-notes.assets/5.charmm-6.png" alt=""
+	title="" width="250"/>
 
 If we click on `step3_packing.pdb`, we can see the result so far.
 
-![](msi-notes.assets/5.charmm-7.png)
+<img src="msi-notes.assets/5.charmm-7.png" alt=""
+	title="" width="400"/>
 
 **Generate Components**
 
-![](msi-notes.assets/5.charmm-8.png)
+<img src="msi-notes.assets/5.charmm-8.png" alt=""
+	title="" width="450"/>
 
 > There are two popular methods commonly used to build a realistic protein/membrane complex. In the first method, lipid-like pseudo atoms are first distributed around a protein and then replaced by lipid molecules one at a time [19]–[21]. Individual lipid molecules are randomly selected from a lipid library that contains various conformations of lipid molecules. This method allows one to easily control the system size and the number of lipid molecules while it generates a lipid bilayer nicely packed around the protein. In the second method, a hole is first created in a pre-equilibrated lipid bilayer and then the membrane protein is inserted into the hole [22]–[24]. In general, weak repulsive radial forces perpendicular to the membrane normal are applied to a lipid bilayer until the hole is large enough to accommodate the protein. This method provides a well-equilibrated lipid bilayer, and one might expect less equilibration time than in the first method. For the sake of convenience, the first method is called the “replacement method” and the second method is called the “insertion method” hereinafter. Although both methods are well explained in the literature [19]–[24], considerable efforts and experiences with MD simulation software are required to build a realistic protein/membrane system.
 > 
@@ -1569,11 +1585,13 @@ Membrane components are generated. Due to time constrains, we first generate the
 
 **Define equilibration conditions** <!--Before min 1:05-->
 
-![](msi-notes.assets/5.charmm-9.png)
+<img src="msi-notes.assets/5.charmm-9.png" alt=""
+	title="" width="350"/>
 
 Finally, we download all files.
 
-![](msi-notes.assets/5.charmm-10.png)
+<img src="msi-notes.assets/5.charmm-10.png" alt=""
+	title="" width="350"/>
 
 ### Equilibration and Production
 
@@ -1587,13 +1605,15 @@ In the `2_equilibration_and_production` directory, there are some restraints of 
 
 The two first retraints apply to the protein. Then, the lipids are packed around the protein (before there were some empty spaces) and water is prevented from entering the membrane.
 
-![](msi-notes.assets/5.equilibration-production-1.png)
+<img src="msi-notes.assets/5.equilibration-production-1.png" alt=""
+	title="" width="400"/>
 
-![](msi-notes.assets/5.equilibration-production-2.png)
+<img src="msi-notes.assets/5.equilibration-production-2.png" alt=""
+	title="" width="400"/>
 
-Now look ar her files, the folder we said. Inside, gromacs. Interested in steps 6 to 7. Around min 1:18.
+Now look ar her files, the folder we said. Inside, gromacs. Interested in steps 6 to 7. <!--Around min 1:18.-->
 
-Proa_rest_itp: fc_bb is force constraint backbone.
+`Proa_rest_itp`: fc_bb is force constraint backbone.
 
 `toppar` contains stuff about the molecules found in our simulation.
 
@@ -1601,7 +1621,8 @@ Fixed only one atom of the head. You don't allow to move it from z so it doestn 
 
 There is a slide on how to run it.
 
-![](msi-notes.assets/5.equilibration-production-3.png)
+<img src="msi-notes.assets/5.equilibration-production-3.png" alt=""
+	title="" width="450"/>
 
 ### Analysis
 
@@ -1615,31 +1636,38 @@ Open the `.psf` with VMD and then load the `.xtc` into it.
 
 > Tip: as the simulation has too many frames, we can make it less comoutationally intensive by decreasing the number of frames: right click the simulation and choose "Delete frames". In stride put two, so it reduces the number of frames by half:
 > 
-> ![](msi-notes.assets/5.vmd2-2.png)
+> <img src="msi-notes.assets/5.vmd2-2.png" alt=""
+	title="" width="200"/>
 
 A first observation is that waters are very dynamic, as they can travel a lot. But we don't care about this because we don't analyse water.
 
 The first thing to do is aligning the backbone of the protein with the RMSD Trajectories tool (*check the backbone box*).
 
-![](msi-notes.assets/5.vmd2-1.png)
+<img src="msi-notes.assets/5.vmd2-1.png" alt=""
+	title="" width="400"/>
 
 Next, a VolMap is generated with:
 
 * Selection: resname SOD and within 5 of protein
 * Type: occupancy
 
-![](msi-notes.assets/5.vmd2-3.png)
+<img src="msi-notes.assets/5.vmd2-3.png" alt=""
+	title="" width="400"/>
 
 When this is done, go to the generated representation and plot it as isosurface with a value of 0.01. It is also a good idea to make it translucent instead of opaque.
 
-![](msi-notes.assets/5.vmd2-4.png)
+<img src="msi-notes.assets/5.vmd2-4.png" alt=""
+	title="" width="400"/>
 
 In the simulation we saw that one of the ions entered the channel, stayed at one point and then goes further inside. The VolMap confirms this behaviour: we observe two very defined binding sites.
 
 To plot the ion entrance over time, the following steps are needed:
 
 * To get the index, select it and go to labels. In this case, it is 56129 (this can change for each simulation).
-	![](msi-notes.assets/5.vmd2-1.png)
+
+	<img src="msi-notes.assets/5.vmd2-5.png" alt=""
+	title="" width="300"/>
+	
 * Using a script, select your ion and obtain the Z coordinate:
 	```
 	set sel [atomselect top "index 56129"]
