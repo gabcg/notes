@@ -418,7 +418,7 @@ Also, seeing a single in a simulation does not mean it is relevant: when it is o
 
 ### Visualization and Basic Analysis of Simulations
 
-Open 1UBQT.pdb the structure with File > New Molecule...
+Open `1UBQT.pdb` the structure with `File > New Molecule...`
 
 The `Mouse` menu allows to change between modes, but there are also keys:
 
@@ -502,16 +502,21 @@ Some basics:
 
 We can select and measure atoms:
 
-```reformat
-set sel [atomselect top "all"] (top is the id or smth.
+```
+set sel [atomselect top "all"]
+```
 
-Now we can make questions ab selection $sel num gives 660.
+Top is the  molecule that is defined as "top" in the molecule list.
 
-set sel [atomselect top "hydrophobic and name N"
+When a selection is done, we can get information from it:
 
-To show polar, we need blabla
+```
+$sel num
+```
 
-From slide:
+Commands from slide:
+
+```
 set sel [atomselect top "all"]
 $sel num
 $sel moveby {10 0 0}
@@ -530,7 +535,7 @@ Dynamics of drug receptor interactions: the delta opioid receptor bound to naltr
 
 First we need to open the following file `structure_WT.pdb` as new molecule. Once we've done it, select `Load Data into Molecule` and choose the `.dcd` file (which contains the frames). To finish, load the visualization state (`.vmd` extension).
 
-Perform RMSD alignment (Extensions > Analisys > RMSD Trajectory Tool
+Perform RMSD alignment: `Extensions > Analisys > RMSD Trajectory Tool`
 
 Steps in slide
 
@@ -550,27 +555,9 @@ so we need to do a selection of ALA LEU VAL ILE PRO PHE MET TRP that are at leas
 
 resname ALA as within 3 of resname EJ4 and not hydrogen
 
-tenemos gly, tyr308, lys, VAL217, MET132, TRP274, ILE304, VAL281, tyr129, trp284
+## 3: GROMACS
 
-ASP128
-TYR308
-GLY307
-LYS214
-**MET132**
-**VAL217**
-**TRP274**
-**ILE304**
-**VAL281**
-TYR129
-TYR308
-ASP128
-**TRP284**
-
-q9: tyr129
-
-## Class 3: GROMACS
-
-<!--Date 09/04/2019-->
+> Date 09/04/2019
 
 ### NOTES TAKEN IN CLASS
 
