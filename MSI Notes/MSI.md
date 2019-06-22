@@ -278,8 +278,6 @@ In this algorithm, the position is called $r$, and is defined at time $t$. The v
 
 Positions and velocities are updated using the forces $F(t)$ determined by the positions at time $t$.
 
-C1-8_summary-md-alg
-
 <img src="msi-notes.assets/C1-9_leap-frog-1.png" alt=""
 	title="" width="250"/>
 
@@ -304,19 +302,19 @@ Simulating in vacuum is unrealistic: a solvent is needed. Some approaches put di
 
 Different water models have been created. Parameters are defined to reproduce the properties of water at room temperature and atmospheric pressure. The most widely used are rigid (its vibration is stiff).
 
-**Transferable Interaction Potential (TIP)**
+###### Transferable Interaction Potential (TIP)
 
 TIP3P: TIP model with 3 interaction sites centred on the atomic nuclei. Positive partial charges on the hydrogen atoms and negative on the oxygen.
 
 TIP4P: TIP model with 4 interaction sites. The negative charge is moved 0.015 nm off the oxygen towards the hydrogens along the bisector of the HOH angle. Slightly better than TIP3P, but computationally more expensive.
 
-**Simple Point Charge (SPC)**
+###### Simple Point Charge (SPC)
 
 As TIP, it is a series of models. All of them have 3 interaction sites centred on the atomic nuclei. Positive partial charges on the hydrogens and negative on the oxygen.
 
 SPC with C6 Lennard-Jones parameters on the hydrogen atoms. The best model with three sites within the TIP and SPC families.
 
-**Model Election**
+###### Model Election
 
 The water model can be chosen independently of the biomolecular force field, but often this is not a good idea:
 
@@ -370,15 +368,15 @@ Regarding the chemical potential, it can be reproduced by adding or removing par
 
 Ensembles keep some parameters fixed. As a summary, the canonical ensemble has a termostat, and the isobaric also a barostat.
 
-**Microcanonical Ensemble (NVE)**
+##### Microcanonical Ensemble (NVE)
 
 The thermodynamic state characterized by a fixed number of atoms, $N$, a fixed volume $V$ and a fixed energy $E$. This corresponds to an isolated system.
 
-**Canonical Ensemble (NVT)**
+##### Canonical Ensemble (NVT)
 
 Collection of all systems whose thermodynamic state is characterized by a fixed number of atoms, $N$, a fixed volume $V$ and a fixed temperature $T$.
 
-**Isobaric-isothermal Ensemble (NPT)**
+##### Isobaric-isothermal Ensemble (NPT)
 
 Characterized by afixed number of atoms, $N$, a fixed pressure $P$ and a fixed temperature $T$.
 
