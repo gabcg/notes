@@ -82,9 +82,6 @@
   	  * [Application to Molecular Dynamics](#application-to-molecular-dynamics)
  	 * [6\.6 Learnign Matrices from Trajectories (of Discrete States)](#66-learnign-matrices-from-trajectories-of-discrete-states)
  	 * [6\.7 Markov Modeling a ID Trajectory](#67-markov-modeling-a-id-trajectory)
-
-  * [Class 6: Markov\-Based Analysis of Biomolecular Systems](#class-6-markov-based-analysis-of-biomolecular-systems)
-    * [Introduction](#introduction-1)
 * [Part 2\. Beyond Classical MD](#part-2-beyond-classical-md)
   * [C8\. Enhanced Sampling Techniques](#c8-enhanced-sampling-techniques)
     * [Introduction](#introduction)
