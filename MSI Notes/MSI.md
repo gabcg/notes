@@ -72,6 +72,17 @@
     * [Simulation Setup](#simulation-setup-1)
     * [Equilibration and Production](#equilibration-and-production)
     * [Analysis](#analysis-2)
+  * [6\. Markov\-Based Analysis of Biomolecular Systems](#6-markov-based-analysis-of-biomolecular-systems)
+  	* [6\.1 Introduction](#61-introduction)
+  	* [6\.2 Trajectory Analysis and Collective Variables](#62-trajectory-analysis-and-collective-variables)
+  	* [6\.3 A Trival Example: SH2](#63-a-trival-example-sh2)
+  	* [6\.4 Going Multi\-State](#64-going-multi-state)
+ 	 * [6\.5 Discrete\-Time Markov Chains](#65-discrete-time-markov-chains)
+  	  * [The weather as a trivial example of a Markov model](#the-weather-as-a-trivial-example-of-a-markov-model)
+  	  * [Application to Molecular Dynamics](#application-to-molecular-dynamics)
+ 	 * [6\.6 Learnign Matrices from Trajectories (of Discrete States)](#66-learnign-matrices-from-trajectories-of-discrete-states)
+ 	 * [6\.7 Markov Modeling a ID Trajectory](#67-markov-modeling-a-id-trajectory)
+
   * [Class 6: Markov\-Based Analysis of Biomolecular Systems](#class-6-markov-based-analysis-of-biomolecular-systems)
     * [Introduction](#introduction-1)
 * [Part 2\. Beyond Classical MD](#part-2-beyond-classical-md)
@@ -114,9 +125,7 @@ Part 1. Classical Unbiased MD
 
 ### 1. Introductory Concepts
 
-Molecular simulations can be considered as a virtual microscope with high temporal and spacial resolution, that complements conventional experiments.
-
-They allow studying complex, dynamic processes occuring in biological systems, such as:
+Molecular simulations can be considered as a virtual microscope with high temporal and spacial resolution that complements conventional experiments. They allow studying complex, dynamic processes occuring in biological systems, such as:
 
 * Protein stability.
 * Conformational changes.
@@ -126,13 +135,13 @@ They allow studying complex, dynamic processes occuring in biological systems, s
 
 #### 1.1 Timescales
 
-Different processes occur in different time scales:
+Different processes occur in different timescales:
 
 * Bond vibration: femtoseconds ($10^{-15}$ s).
 * Bond rotation: picoseconds ($10^{-12}$ s).
 * Ion crossing: nanoseconds ($10^{-19}$ s).
 
-Depending on the size of the system or the computing power, different timescales can be achieved. For example, small systems can be simulated on a milisecond ($10^{-3}$ s) scale, but bigger systems would need a milisecond for this.
+Depending on the size of the system or the computing power, different timescales can be achieved. For example, small systems can be simulated on a milisecond ($10^{-3}$ s) scale, but bigger systems would need a bigger scale for this.
 
 To arrive to the scale of seconds, we can wait for technological advances or use advanced algorithms.
 
@@ -140,7 +149,7 @@ To arrive to the scale of seconds, we can wait for technological advances or use
 
 In proteins, bond vibration happens in picoseconds to nanoseconds, while an helix movement can happen in miliseconds to seconds.
 
-We can consider a protein conformation as a snapshot in a single point of time, but proteins are dynamic and change from one conformation to other. Some of those cluster in zones of similar conformations, called **conformational states**. Typically, we can consider active, inactive and intermediate conformational states.
+We can consider a protein conformation as a snapshot in a single point of time, but proteins are dynamic and change from one conformation to other. Some of those cluster in zones of similar conformations, called **conformational states**. Typically, we can consider three: active, inactive and intermediate.
 
 <img src="msi-notes.assets/C1-1_conformational-states.png" alt=""
 	title="" width="300"/>
@@ -148,17 +157,16 @@ We can consider a protein conformation as a snapshot in a single point of time, 
 To perform a molecular simulation, it is important to use good experimental data:
 
 * Crystallography allows a good resolution, and shows the average of a given conformational state.
-* Spectroscopy (NMR/fluorescence): resolution-wise, small proteins offer a good resolution with this technique, while big proteins do not behave so well. As an advantage, it allows to see different structures (even if they are just changes of an inserted chemical probe).
+* Spectroscopy (NMR/fluorescence): small proteins offer a good resolution with this technique, while big proteins do not behave so well. As an advantage, it allows to see different structures (even if they are just changes of an inserted chemical probe).
 
 ### 2. Molecular Mechanics
 
-Molecular mechanics is a computational method to calculate geometries and energies.
+Molecular mechanics is a computational method to calculate geometries and energies. Systems are simplified in order to perform the calculations with larger molecules.
 
-Systems are simplified in order to perform the calculations with larger molecules. An example of this is that atoms are treated as rubber balls of different size (atom types) joined together by springs of varying length.
+> An example of this is that atoms are treated as rubber balls of different size (atom types) joined together by springs of varying length.
 
-<img src="msi-notes.assets/C1-2_atoms.png" alt=""
+> <img src="msi-notes.assets/C1-2_atoms.png" alt=""
 	title="" width="150"/>
-
 
 Molecular mechanics enables the calculation of the total steric energy in terms of deviations from reference “unstrained” bond length angles and torsions plus non-bonded interaction (VdW, electrostatic):
 
@@ -173,18 +181,18 @@ $$
 * It consists on a sum of the energy of each bond.
 * There are two parameters that are assigned to each pair of bonded atoms based on their type (e.g. C-C, C-H):
 	* $k_b$: spring constant, controls the stiffness of the bond: the higher, the stiffer, which means that more energy is required to deform the bond from its equilibrium value.
-	* $r_0$: it comes from experiments such as nature, crystallography, ab initio; or from quantum mechanics calculations. It is collected in the force field file.
+	* $r_0$: it comes from experiments such as nature, crystallography, *ab initio*; or from quantum mechanics calculations. It is collected in the force field file.
 * High differences between $r$ and $r_0$ increase the energy.
 
 <img src="msi-notes.assets/C1-3_stretching-energy.png" alt=""
-	title="" width="400"/>
+	title="" width="450"/>
 
 ##### Bending Energy
 
 * The equation estimates the energy associated with the vibration about the equilibrium bond angle.
 * In this case, parameters are assigned to triplets of atoms, based on their type.
 	* $\theta_0$: reference value for which energy E adopts the optimum.
-	* $K_0$: controls the stiffness of the angle spring. A larger value means that more energy is required to deform or bond the angle from its equilibrium value. 
+	* $k_{\theta}$: controls the stiffness of the angle spring. A larger value means that more energy is required to deform or bond the angle from its equilibrium value. 
 
 <!--The reference is still in the force field.-->
 
@@ -264,7 +272,6 @@ In a CHARMM36 force field, we can observe:
 * The next step is to move the atoms, calculating velocities. Those are also dependent on the temperature (which is present in the formula).
 	* *It seems that for some parts, the velocity is assigned randomly* 
 * Finally, the time is moved forward and the procedure is repeated.
-
 
 <img src="msi-notes.assets/C1-8_summary-md-alg.png" alt=""
 	title="" width="450"/>
@@ -556,19 +563,19 @@ so we need to do a selection of ALA LEU VAL ILE PRO PHE MET TRP that are at leas
 
 resname ALA as within 3 of resname EJ4 and not hydrogen
 
-## 3: GROMACS
+## 3. GROMACS
 
 > Date 09/04/2019
 
 ### NOTES TAKEN IN CLASS
 
-### Introduction
+### 3.1 Introduction
 
 The goal of today is to learn to setup a simulation with GROMACS. An overview of the pipeline that the program follows is:
 
 <!--Insert image from PDF-->
 
-1. Checking the PDB file for missing parts. Certain parts of the structure are too flexible to be captured by X-rays. This usully happens with the surface of the protein, as it is interacting with the solvent.
+1. Checking the PDB file for missing parts. Certain parts of the structure are too flexible to be captured by crystallography. This usully happens with the surface of the protein, as it is interacting with the solvent.
 2. Add hydrogens to the structure and generate the topology with `pdb2gmx`.
 3. Build a simulation box with `editconf` and fill it with a solvent with `solvate`.
 4. Add ions with `genion` to neutralize possible net charges.
@@ -576,11 +583,11 @@ The goal of today is to learn to setup a simulation with GROMACS. An overview of
 6. Run mdrun to simulate.
 7. Analyse the simulation.
 
-### Preparation of the Structure
+### 3.2 Preparation of the Structure
 
 Most of this part is already "done", as the structure we use does not have missing parts. The only thing we need to do remove the water molecules from the PDB file with the text editor of our choice.
 
-### Generation of the Topology File
+### 3.3 Generation of the Topology File
 
 We look into the topology file. It has info ab the molecule. You get 4 each residue the atom tyoe, resnumber atom itself, charge, mass, sum of the charge.
 
@@ -588,7 +595,7 @@ Some extra things it says. We are going to do equilibration by constraining heav
 
 At the bottom there is a list of molecules: we will put more molecules in the next steps there.
 
-### Box Definition and Solvation
+### 3.4 Box Definition and Solvation
 
 This is done with `editconf` and `solvate`. We will use a cubic box, but using a rhombic dodecahedral box would be a better option, as it optimizes the volume. This accelerates computation because there are less solvent molecules.
 
@@ -616,9 +623,7 @@ We add Na or Cl to neutralize (depends on the net charge. It is also needed to s
 
 In nature net charges are zero. Maybe they concentrate somewhere, or move, but net is zero.
 
-------
-
-### Minimization
+### 3.5 Minimization
 
 Solvated neutralized system. Reason: we added estimated hydrogens (maybe they need to be minim and also find their right orientation within the system). We also added water and ions.
 
@@ -660,7 +665,7 @@ We can see an animation of the minimization by opening the molecule (the last `.
 
 > She says she is disapponted as the `.trr` only contained one frame, so it' not a real animation. We could have configured it to contain more frames.
 
-### Equilibration
+### 3.6 Equilibration
 
 The equilibration has two steps. For both of them, a `.mdp` protocol and the generation of a binary `.tpr` is needed.
 
@@ -697,11 +702,11 @@ Now we **generate the NPT ensemble to continue the simulation**, by adding a bar
 
 > The input to do the plot can be found in `3.5_NPT`.
 
-### Production Run
+### 3.7 Production Run
 
 Generate the `.tpr` using the proper protocol, the structure obtained from NPT and the topology file.
 
-### Analysis
+### 3.8 Analysis
 
 For the analysis, the simulation needs to be aligned and centered on the protein. For that, you can check if the protein is stable or not by calculating the RMSD. You choose the backbone atoms. Make a plot of the RMSD. Check if the protein changes conformation or converges to a more or less stable conformation.
 
@@ -1706,12 +1711,192 @@ close $file
 
 > The selection must always be updated, if not it will go to the last frame.
 
-## Class 6: Markov-Based Analysis of Biomolecular Systems
+## 6. Markov-Based Analysis of Biomolecular Systems
 
-<!--Date: 26/04/2019-->
+> Date: 26-04-2019
 
 Toni Giorgino, from the National Research Council of Italy. [Website](giorginolab.it), [email](mailto:toni.giorgino@cnr.it),[GitHub](https://github.com/giorginolab).
 
+### 6.1 Introduction
+
+* Objective: provide an overview of MD-based state models in computational structural biology.
+	* We can consider several transitions.
+		* Protein folding: folded, unfolded and intermediate states.
+		* Channels: open, closed, occupied...
+		* In normal simulation we observe time flowing forward. In this case, we want to rationalize what is observed and know which states the system is passing through.
+* Markov-state models are emerging for several reasons:
+	* Kinetic information (with the corresponding structures) can be reconstructed from simulated trajectories.
+		* This includes state transition networks.
+		* Kinetic means: we can know the time it takes from one state to the other.
+	* It can start from **unbiased simulations**, not requiring *a priori* reaction coordinate hypothesis. *This means that the simulation is more similar to the physiological conditions.*
+	* Microsecond-scale trajectory data is becoming accesible.
+* Markov models have been succesfully used for *ab initio* folding, drug binding, peptide binding, etc.
+
+Most basic type of analysis is the time-series analysis, in which we use a trajectory file and take snapshots of time, seeing what happens according to an arbitrarily chosen function (i.e. distance between two atoms).
+
+When simulating, only what gets simulated can be seen: if a system goes towards a state change but comes back, the whole process cannot be reconstructed.
+
+Also, replicating a simulation is usually a good idea: simulating 100 ns is more difficult than simulating 1 ns 100 times. If the simulation was replicated, maybe in other simulation the transition is present, but not what happens before. Something allowing the merge of the simulations would be a solution.
+
+In the following image, we can see domains of time and space which are experimental techniques:
+
+<img src="msi-notes.assets/C6.1.png" alt=""
+	title="" width="450"/>
+
+* We see that crystal structures have high resolution in space, but not in time (no dynamic information).
+* Also that all-atoms molecular dynamics are computationally expensive, limiting simulation time.
+	 * If the biological feature is in the miliseconds, it cannot be reached, it takes too much "human" time to wait for the computer to finish.
+
+### 6.2 Trajectory Analysis and Collective Variables
+
+Collective variables are arbitrarily chosen variables that help understanding the changes that happen in the structure. They are functions of time. Examples are distance, anfle, energy, contacts or solvation. They are more meaningful than raw coordinates.
+
+The time-series analysis of collective variables is useful when the system is at equilibrium, such as exploring states around the biologically relevant structure. The problem is that deductions beyond the observed timescales cannot be done, and the phenomena of interest are usually too long for the timescale because of the existence of barriers.
+
+To solve the problem, use *ensembles* of simulations to estimate dynamic behaviours that happen on longer timescales than the one of each individual simulation would be useful.
+
+### 6.3 A Trival Example: SH2
+
+The SH2 domain is a biological socket that recognizes very specific peptides, in this case phosphorilated tyrosine, which is very complementary when the pocket is open. This domain has a high biological importance because there are a lot of copies of it on the genome.
+
+Simulations are prepared in the normal way from the unbound state, taking replicas. The red color means that the side chains are fast, while the blue that they are slow. The charged phosphotyrosine drives the movement of the red parts.
+
+The binding of the phosphotyrosine was obtained by luck: binding is a statistical phenomenon and not always happens in the simulation (most replicas did not contain it). Waiting enough time would make the binding happen because the ligand diffuses, but this is out of our technological reach.
+
+The goal would be use those replicas where the binding did not happen (partial simulations) to reconstruct the final bound pose and the timescale in which binding occurs.
+
+Most basic representation of this binding process is two state model (bound and unbound), with a transition from unbound to bound.
+
+<img src="msi-notes.assets/C6.2.png" alt=""
+	title="" width="250"/>
+
+The unbinding transition is possible in nature, but it is usually longer: if the ligand has a high affinity constant with the receptor then statistically there are more lignads bound than unbound, so the time to bind is faster than the time to unbind, which means that in simulations if we are lucky we see some bunding, but if we start from the bound pose it is so strong that it will never go out if we don't invent something.
+
+The evidence that binding is a statistical proccess can be seen by the concept of exponential relaxation, which is studied in chemistry kinetics. When there is a first order transition between two states, after infinite time an equilibrium is reached. Depending on the $k_d$, it can be unbalanced towards the all bound, such as in this case.
+
+This equilibrium can be seen as a curve of concentration vs time, starting from the unbound state: we observe that the longer the time, the more are in the bound pose.
+
+<img src="msi-notes.assets/C6.3.png" alt=""
+	title="" width="350"/>
+
+### 6.4 Going Multi-State
+
+In practice, even for the previous example, bound and unbound are not unique, as there are intermediate states. A more general solution in which more than two states can be used would be decided. Other reasons are:
+
+* Sometimes we do not have a proper definition of the bound state, because there is no structural information from NMR or crystallography.
+* A sizeable number of full binding events is needed. As association processes are slow, they may be outside the sampling power.
+* Two states do not tell information about *off* rates.
+* Two states do not tell information about metastable states.
+
+> In fields such as drug structural optimization the intermediate states are important, as it can be important to optimize or discourage some of them.
+
+The states can be arbitrarily chosen generating a position grid, based on the RMSD or based on previous knowledge (which will not always exist):
+
+* In a position grid, the transitions do not need to be ordered: it is a space decomposition grid, which mesns that we are just calling transition changing the cell.
+* Traversing an ion channel would require some previous knowledge: in this case the process is known to follow a certain direction without too much deviation. Then, the interesting reaction coordinate is known in advance.
+	> Prior knowledge is not always possible: in binding, we see thet the ligand first explores the surface of the protein, so a single sequence of states cannot be provided.
+
+Using intermediate states, even arbitrary ones, has an interesting advantage: while observing the full transition from unbound to bound, observing these smaller transitions is easier, as the changes are faster. This means that replicas of the simulation can be started from the unbound pose. Hopefully, one will transition to S1. Later, replicas starting from S1 can be started, and so on. Finally, the combination of small pieces can generate the whole process.
+
+From the kinetics point of view, the $k_{on}$ can be reconstructed by combining the rates of different intermediate steps, and also the $k_{off}$ if the sates are fine grained.
+
+<img src="msi-notes.assets/C6.4.png" alt=""
+	title="" width="250"/>
+
+### 6.5 Discrete-Time Markov Chains
+
+The combination of states to compute the final can be achieved using markov models. A random process is taken, where the states of the system are discrete  variables undergoing transitions at uniformly-spaced time points.
+
+The analysis of the system is easy if it is assumed that the transition probabilities are not dependent on the history of states. This is a property of these systems, called **memorylessness**.
+
+> This means that if the system is in S5, the probability to go to S0 must not depend on which state I was before S5. This means that the probability of transitioning from S5 to S0 in a unit of time is fixed. Thes probabilities can be computed from trajectories.
+> 
+
+#### The weather as a trivial example of a Markov model
+
+The following model of weather prediction is built:
+
+<img src="msi-notes.assets/C6.5.png" alt=""
+	title="" width="300"/>
+	
+From it, we see:
+
+* If today is rainy, there is a 50% probability that tomorrow is rainy again or it is sunny.
+* If today is sunny:
+	* The probability that tomorrow is sunny is 90%.
+	* The proability that tomorrow rains is 10%.
+
+
+Making this schema, a probability matrix can be written, where:
+
+* The first row represents a sunny day and contains the probability of staying sunny and go towards rain.
+* The second row represents a rainy dat and contains the probability of staying rainy and go towards sun.
+
+In the matrix, all rows should sum one, because nor matter what the weather is, something will happen tomorrow (a probability of one). If this does not happen, a normalization procedure is applyed to the matrix.
+
+$$
+P =
+\begin{bmatrix}
+0.9 & 0.1 \\ 
+ 0.5 & 0.5 
+\end{bmatrix}
+$$
+
+An initial condition that it is sunny with certainty, $X_0$, is assumed: 
+
+* p(Sunny | t=0)=1 (it is certainly sunny).
+* p(Rainy | t=0)=0 (today is not rainy).
+
+The so-called initial configuration state can be summarized by the $s_0 = [1, 0]$ probability. 
+
+*More on this probabilities, new matrices and so in the slides*
+
+<img src="msi-notes.assets/CD6.1.png" alt=""
+	title="" width="350"/>
+
+<img src="msi-notes.assets/CD6.2.png" alt=""
+	title="" width="350"/>
+
+Multiplying the matrix (which is constant) and the probabilities of today will give the probabilities of next day's weather. After multiplying over and over again, it can be seen that the probabilities go towards an equilibrium. That is the average weather over a long period.
+
+<img src="msi-notes.assets/C6.6.png" alt=""
+	title="" width="300"/>
+
+All this procedure can be done with more states (for example, adding cloudy). The probability matrix of transitions is bigger, but the behaviour is more or less the same, until a final distribution is computed.
+
+<img src="msi-notes.assets/C6.7.png" alt=""
+	title="" width="250"/>
+
+* Starting from sunny:
+	
+	<img src="msi-notes.assets/C6.8.png" alt=""
+		title="" width="300"/>
+
+* Starting from rainy:
+	
+	<img src="msi-notes.assets/C6.9.png" alt=""
+		title="" width="300"/>
+
+So we see that the starting point modifies the path that was followed, but not the final result.
+
+This all leads to mathematical concepts:
+
+* The final states are the eigenvector of the transition probability matrix. Is the combination of weather wich if you go to the next day it is still the same.
+* The eigenvalues of the transition probability matrix answer the following questions:
+	* How many days it takes to go to the final state?
+	* How long are the exponential curves?
+
+#### Application to Molecular Dynamics
+
+Probability matrices can be obtained from simulations, which are considered the "truth". Applying all this concepts, the following information can be obtained:
+
+* The stationary distribution.
+* The relaxation times.
+* Mean-first passage times, which are kinetic rates (in the weather, it is the average number of days until it is sunny if it is raining or viceversa).
+* Others: committor probabilities, fluxes...
+
+
+<!--
 ### Introduction
 
 States: when the system overgoes a transition (folded to folded, but also intermediate: ie open/closed but lso occupied or not). Normal sim has times going forward. We want to analyse where systems are passing to.
@@ -1773,6 +1958,7 @@ Eigenb¡vectrs: eval
 eve: take the 1st column, take the real part, and then take -log (probabilities to free energies conversion), and whatever
 
 then plot it: double well
+-->
 
 # Part 2. Beyond Classical MD
 
