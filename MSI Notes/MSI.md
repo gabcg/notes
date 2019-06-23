@@ -73,15 +73,18 @@
     * [Equilibration and Production](#equilibration-and-production)
     * [Analysis](#analysis-2)
   * [6\. Markov\-Based Analysis of Biomolecular Systems](#6-markov-based-analysis-of-biomolecular-systems)
-  	* [6\.1 Introduction](#61-introduction)
-  	* [6\.2 Trajectory Analysis and Collective Variables](#62-trajectory-analysis-and-collective-variables)
-  	* [6\.3 A Trival Example: SH2](#63-a-trival-example-sh2)
-  	* [6\.4 Going Multi\-State](#64-going-multi-state)
- 	 * [6\.5 Discrete\-Time Markov Chains](#65-discrete-time-markov-chains)
-  	  * [The weather as a trivial example of a Markov model](#the-weather-as-a-trivial-example-of-a-markov-model)
-  	  * [Application to Molecular Dynamics](#application-to-molecular-dynamics)
- 	 * [6\.6 Learnign Matrices from Trajectories (of Discrete States)](#66-learnign-matrices-from-trajectories-of-discrete-states)
- 	 * [6\.7 Markov Modeling a ID Trajectory](#67-markov-modeling-a-id-trajectory)
+   * [6\.1 Introduction](#61-introduction)
+   * [6\.2 Trajectory Analysis and Collective Variables](#62-trajectory-analysis-and-collective-variables)
+   * [6\.3 A Trival Example: SH2](#63-a-trival-example-sh2)
+   * [6\.4 Going Multi\-State](#64-going-multi-state)
+   * [6\.5 Discrete\-Time Markov Chains](#65-discrete-time-markov-chains)
+    * [The weather as a trivial example of a Markov model](#the-weather-as-a-trivial-example-of-a-markov-model)
+    * [Application to Molecular Dynamics](#application-to-molecular-dynamics)
+  * [6\.6 Learnign Matrices from Trajectories (of Discrete States)](#66-learnign-matrices-from-trajectories-of-discrete-states)
+    * [Factors Affecting Markovianity](#factors-affecting-markovianity)
+  * [6\.7 Markov Modeling a ID Trajectory](#67-markov-modeling-a-id-trajectory)
+  * [6\.8 Back to Molecules: the &gt;&gt; 1 Dimension Continuous Clustering](#68-back-to-molecules-the--1-dimension-continuous-clustering)
+  * [6\.9 Conclusions and Resources](#69-conclusions-and-resources)
 * [Part 2\. Beyond Classical MD](#part-2-beyond-classical-md)
   * [C8\. Enhanced Sampling Techniques](#c8-enhanced-sampling-techniques)
     * [Introduction](#introduction)
@@ -1892,6 +1895,182 @@ Probability matrices can be obtained from simulations, which are considered the 
 * Mean-first passage times, which are kinetic rates (in the weather, it is the average number of days until it is sunny if it is raining or viceversa).
 * Others: committor probabilities, fluxes...
 
+### 6.6 Learnign Matrices from Trajectories (of Discrete States)
+
+To generate the probability matrix from a simulation, the first step is to take the trajectory and assign the state for each frame (Python or R can be used for this). Then, combinations of states that are observed for a certain distance are counted. This distance is called lag time $\tau$.
+
+
+<img src="msi-notes.assets/C6.10.png" alt=""
+	title="" width="700"/>
+
+> In this image, we see that we start in orange. After the lag time we see that we end up in blue, and the matrix starts to be filled, and so on.
+> 
+> An example on how the markovian assumption of the transition probabilities not depending on history is being hold is that Note how "early" and "late" events are squashed in the same matrix.
+
+This count is done iteratively for each time unit (frame) of the trajectory and for every replica of the simulations. All replicas are then combined together. The procedure ends up with a normalization so the row sum is 1.
+
+<img src="msi-notes.assets/C6.11.png" alt=""
+	title="" width="350"/>
+
+As with the weather model, multiplying $p$ by a state with tell the state of the next time. Multiplying by $n$ times will give the state after $n$ times.
+
+<img src="msi-notes.assets/C6.12.png" alt=""
+	title="" width="350"/>
+
+The stationary state is gotten after multiplying infinite times. We will see that the state will not change anymore when it is propagated forward, and it is equivalent to the eigenvector of the matrix. The stationary state is equivalent to a reconstruction of the most probable state, and also informs about the probability of the other states. This means that the **distribution of the probabilities of the states** can be calculated from the probability matrix even if all the states were not observed because the simulation time was short.
+
+<img src="msi-notes.assets/C6.13.png" alt=""
+	title="" width="350"/>
+
+If everything was done right the highest final probability will correspond to the bound state if binding is what is being studied.
+
+#### Factors Affecting Markovianity
+
+The markovianity property that states do not depend on the past is an assumption and does not have to be necesarily true. The weather example is one of those cases, unless we look enough in the future: the property will not stand if the time we look forward is too short, so using bigger times solves this.
+
+For simulations, this would mean increasing $\tau$. To know if the markovianity stands, a sensitivity analysis is done to analyse the influence of $\tau$ on the results: when convergence is reached, markovianity holds.
+
+Other factor that can affect markovianity is the definition of the states, as if the decomposition of what is a state is wrong, markovianity does not hold. The decomposition needs to be done in a way that **ressembles the actual system**. For this, as many details as possible have to be taken into account.
+
+> An example: imagine that a peptide that can be open or closed, and a complex drug with many rotating bonds that can be extended or not. If we only take into consideration if the peptide is open or closed, probable the state definition will be wrong. We would say that this state decomposition is *not trivial*. 
+
+### 6.7 Markov Modeling a ID Trajectory
+
+> Note: the figures from this section come from the practical.
+
+We observe a trajectory in which there is a particle at a certain position $x$. The positions are the states. We see that it goes from one direction to the other.
+
+<img src="msi-notes.assets/C6.14.png" alt=""
+	title="" width="350"/>
+
+From the image it can be seen that there are two preferred positions arounf 60 and 45 and an almost forbidden one at 50 (*it can be traversed, so it is not completely forbidden*).
+
+To know the probability of being in any of the states in the case that the trajectory is long enough, one would sample the system enough (easy to do in this case) and count how many times it is in each position and build a histogram.
+
+<img src="msi-notes.assets/C6.15.png" alt=""
+	title="" width="350"/>
+
+The historgram shows that the system goes many times around the state 30 and many times around the state 65, while it is almost never in the middle. By performing the minus logarithm of the counts (Boltzmann inversion), the free energy surface is obtained. In binary systems, this energy would be equivalent to the free energy of binding or the free energy of traversing a barrier.
+
+<img src="msi-notes.assets/C6.16.png" alt=""
+	title="" width="350"/>
+
+There is no information about the timescales yet. Obtaining this information can be hard, but the Markov analysis offers a way to get a precise anwer by counting the transitions: how many times have we seen the particle go from position 11 to 12, and 12 to 13 etc. From this, a matrix is obtained, which is shown as an image for simplicity.
+
+<img src="msi-notes.assets/C6.17.png" alt=""
+	title="" width="350"/>
+
+The matrix is normalized. It can be seen that the particle is almost never around 50.
+
+<img src="msi-notes.assets/C6.18.png" alt=""
+	title="" width="350"/>
+
+The first eigenvector can be computed. It is the stationary probability of the back and forth motion (stationary distribution?). It is the probability to find the particle in any of the 100 defined states after a lot of time. *The markov analysis is used to reconstruct the equilibrium probability of the particle in the potential knowing only the trajectory.*
+
+<img src="msi-notes.assets/C6.19.png" alt=""
+	title="" width="350"/>
+
+Computing the second eigenvector and normalizing results in a profile. It means that there is a general motion to go in a certain exchange probability between the left placing and the right placing.
+
+<img src="msi-notes.assets/C6.20.png" alt=""
+	title="" width="380"/>
+
+Together with the second eigenvector there is an eigenvalue which is a number less than 1 which means how long does it take to exchange between these two configurations (so it is the kinetics).
+
+The first next eigenvector is an indicative of how the probability of finding a particle is moving in time. There are only positives and negatives, it is arbitrary, and it corresponds to an eigenvalue that tells the time of this motion. In this case the eigenvalue is 0.997 and needs further conversion (log, convert to time units). This answers the question on what is the kinetic of going from one position to the other.
+
+**Take home**
+
+* You define the states.
+* You use the trajectory to count transitions obtaining a matrix $P_{ij}$. As large and tall as the number of states you decided to have.
+* Do eigenvector analyis, from which you get first the eigenvalues, the first is one and you dont care. which are time-scales of the motion.
+* To the eigenvalues corresponds some eigenvector. The first is the stational proability, the second is the first large kinetic motion and so on.
+	* These are the equilibrium configuration, i.e. ΔG; and faster “oscillations” (kinetics).
+
+**Markovianity**
+
+* Stress again.
+* The state transition probabilities only depend on the current state. Examples:
+	* Today's weather, not yesterday's.
+		* Season breaks markovianity, unless we include it into the system: then it is markovian again. *Sunny in winter, sunny in summer...*
+	* Where the ligand is, not how did it got there. 
+* This could be false at short timescales, but true at longer ones (system's memory).
+* It does depend on the chosen states.
+
+The markovianity can be checked by repeating the analysis at various lag times (repeat the eigenvalues). Look forward at one timestem and analyze, forward two three four ten etc, until convergence is reached. This results in the implied timescales plot.
+
+<img src="msi-notes.assets/C6.21.png" alt=""
+	title="" width="350"/>
+
+> in this plot convergence is achieved early because of:
+> 
+> * True two-state dynamics.
+> * Absence of orthogonal degrees of freedom.
+> * Fine space discretization.
+
+A bad choice of the discretization breaks the Markovianity assumption.
+
+<img src="msi-notes.assets/C6.22.png" alt=""
+	title="" width="350"/>
+	
+In the “bad discretization” case, the barrier is embedded in one of the states. This generates a “long term memory” effect: the rightmost state could actually be short-lived (if we are on the left of the barrier) or long-lived (if we are on its right). These two cases are convoluted into the same, so that the present state information itself is not sufficient to predict the “future” of the system any more.
+
+### 6.8 Back to Molecules: the >> 1 Dimension Continuous Clustering
+
+From the schema below, the part in blue was still not taken into consideration.
+
+<img src="msi-notes.assets/C6.23.png" alt=""
+	title="" width="350"/>
+	
+* In **metric projection**, the system state is projected in a lower-dimensional space called metric. Some choices are:
+	* Manually chosen distances.
+	* Atom coordinates.
+	* $N$ phi/psi Ramachandran angles.
+	* Distance matrix.
+	* Contact matrix, etc.
+* Clustering (1st level):
+	* Now move to a discrete state space.
+	* Reduction from the low- dimensional space is done by clustering
+		* Usually called “microstates”
+	* Several algorithms are implemented in MSM packages (e.g. grid; k- means; etc.).
+
+### 6.9 Conclusions and Resources
+
+* MSM methods make efficient use of unbiased sampling.
+* Cluster → $P_{ij} → eigenvectors → free energies (KD) and kinetics (kon/koff).
+* Still require huge (but not unreachable) amounts of sampling/simulation for biologically interesting systems (as actual realistic systems are huge).
+* Strong mathematical foundation, with good software available.
+
+#### Software
+
+Following, Python-based examples with clear walkthroughs with datasets.
+
+* [HTMD](www.htmd.org)
+	* Also analysis + system build + adaptive...
+	* Can aggregate large-scale datasets.
+* [PyEMMA](www.emma-project.org)
+* [MSMBuilder](msmbuilder.org)
+
+#### Related Topics
+
+* Estimation of reversible transition matrices
+* Hidden Markov Models doi:10.1063/1.4828816
+* TICA
+* Conformational fluxes
+* Adaptive sampling
+* Role of drug residence time in drug discovery
+
+#### Literature
+
+* Buch et al., 10.1073/pnas. 1103547108
+* Rigid ligand + protein association, simplest case Swinney, PMID:19152211
+* Importance of kinetics in drug design Chodera and Noe, 10.1016/ j. sbi. 2014. 04. 002
+* Excellent overview (1) Voelz et al., 10.1021/ja9090353
+* Full reconstruction of a millisecond folding Pande et al., 10.1016/j.ymeth. 2010. 06. 002
+* Excellent overview (2) Paul et al., 10.1038/s41467-017-01163-6
+* Peptide-peptide association Doerr et al., 10.1021/ ct400919u
+* Adaptive sampling Bryan et al.,
+* “The $25 B eigenvector”, The original PageRank algorithm; e.g. jdc. math. uwo. ca/M1600b/l/ pagerank-1600. pdf
 
 <!--
 ### Introduction
