@@ -141,15 +141,13 @@ Different processes occur in different timescales:
 * Bond rotation: picoseconds ($10^{-12}$ s).
 * Ion crossing: nanoseconds ($10^{-19}$ s).
 
-Depending on the size of the system or the computing power, different timescales can be achieved. For example, small systems can be simulated on a milisecond ($10^{-3}$ s) scale, but bigger systems would need a bigger scale for this.
-
-To arrive to the scale of seconds, we can wait for technological advances or use advanced algorithms.
+Depending on the size of the system or the computing power, different timescales can be achieved. For example, small systems can be simulated on a milisecond ($10^{-3}$ s) scale, but bigger systems would need a smaller one for this. To arrive to the scale of seconds, we can wait for technological advances or use advanced algorithms.
 
 #### 1.2 Protein Motion
 
 In proteins, bond vibration happens in picoseconds to nanoseconds, while an helix movement can happen in miliseconds to seconds.
 
-We can consider a protein conformation as a snapshot in a single point of time, but proteins are dynamic and change from one conformation to other. Some of those cluster in zones of similar conformations, called **conformational states**. Typically, we can consider three: active, inactive and intermediate.
+We can consider a protein conformation as a snapshot in a single point of time, but proteins are dynamic and change from one conformation to another. Some of those cluster in zones of similar conformations, called **conformational states**. Typically, we can consider three: active, inactive and intermediate.
 
 <img src="msi-notes.assets/C1-1_conformational-states.png" alt=""
 	title="" width="300"/>
@@ -218,11 +216,11 @@ In the example, it is not very preferred and A would be high.
 
 * It is the combination of two terms: van der Waals and electrostatic.
 * In both terms, $r_{ij}$ represents radius.
-* The fact that they are summing means that in long distance they do not feal each other.
-* Van der Waals
+* The fact that they are summing means that in long distances they do not feel each other.
+* Van der Waals:
 	* Approximated by a Lennard-Jones 6-12 potential. Itself has two terms, attraction and repulsion:
-		* Attraction: it occurs at a short range, and rapidly dies off when the distance between the interacting pair of atoms increases (by just a few armstrongs, as it has a 1/r^6 dependency).
-		* Repulsion: occurs when the distance is slightly less than the sum of their contact radii. It is modeled by an equation that  is designed to rapidly blow up at close distances  (1/r^12 dependency).
+		* Attraction: it occurs at a short range, and rapidly dies off when the distance between the interacting pair of atoms increases (by just a few armstrongs, as it has a $1/r^6$ dependency).
+		* Repulsion: occurs when the distance is slightly less than the sum of their contact radii. It is modeled by an equation that  is designed to rapidly blow up at close distances ($1/r^{12}$ dependency).
 	* There are two parameters (which are defined in the force field) that control the depth and position (interatomic distance) of the potential energy well for a given pair of atoms:
 		* $A$ defines stickinness of the attraction. It has a negative sign.
 		* $B$ defines the level of hardness of the atoms (marshmallow-like, billiard ball-like, etc.): sof atoms can be deformed when they are close, hard cannot. It belongs to the repulsion term.
@@ -248,13 +246,12 @@ Force fields contain parameters of the energies we have seen and potential energ
 
 There are different types of force field, depending on the application. They evolve, as the longer simulation times allow to see problems, which are corrected.
 
-In a CHARMM36 force field, we can observe:
+A CHARMM36 force field contains:
 
 * The mass of the atoms (even for different types of the same element).
-* Bond definition.
-* Spring constants for two atoms.
+* Bond definition and spring constants for two atoms.
 * Angle definition and spring constants for angles (three atoms).
-* It finishes with comments, which defines the origin of the information contained in the force field.
+* It finishes with comments, which define the origin of the information contained in the force field.
 
 #### 3.2 Scheme of the Algorithm
 
@@ -266,7 +263,7 @@ In a CHARMM36 force field, we can observe:
 	* The integration step is limited by the highest frequency motions: the vibration of hydrogen bonds (typically 0.5 fs).
 	* Constraining those bonds can speed up the simulations to 2 fs.
 	* Biomolecular system with constraints on all bond lengths: 4 to 5 fs.
-	* From a doubt:iIn the simulation, you don't really fix H from side chain and the backbone (but you can if you add more restraints).
+	* From a doubt: in the simulation, you don't really fix H from side chain and the backbone (but you can if you add more restraints).
 * After choosing the initial position of atoms and $\Delta t$: get acting force.
 * Then, the atom acceletation. 
 * The next step is to move the atoms, calculating velocities. Those are also dependent on the temperature (which is present in the formula).
@@ -282,7 +279,7 @@ In a CHARMM36 force field, we can observe:
 
 The leap-frog algorithm and the velocity Verlet integrator are present in most molecular dynamics software. Both algorithms produce identical trajectories when used without speciall additional features:
 
-**Leap-frog algorithm**
+##### Leap-frog algorithm
 
 In this algorithm, the position is called $r$, and is defined at time $t$. The velocity is calculated between each time ($t-1/2\Delta t$).
 
@@ -294,13 +291,12 @@ Positions and velocities are updated using the forces $F(t)$ determined by the p
 <img src="msi-notes.assets/C1-10_leap-frog-2.png" alt=""
 	title="" width="250"/>
  
-**The velocity Verlet integrator**
+##### The velocity Verlet integrator
 
 In this case, positions $r$, velocities $v$ and forces $F(t)$ are determined at time $t$
 
 <img src="msi-notes.assets/C1-11_verlet.png" alt=""
 	title="" width="300"/>
-
 
 *Probably "time t" is actually "time delta t" for both cases*
 
@@ -308,7 +304,7 @@ In this case, positions $r$, velocities $v$ and forces $F(t)$ are determined at 
 
 ##### Solvent and Water Models
 
-Simulating in vacuum is unrealistic: a solvent is needed. Some approaches put dielectric constants of solvents to solve the molecular system, but its not as good as having water.
+Simulating in vacuum is unrealistic, so a solvent is needed. Some approaches put dielectric constants of solvents to solvate the molecular system, but its not as good as having water.
 
 Different water models have been created. Parameters are defined to reproduce the properties of water at room temperature and atmospheric pressure. The most widely used are rigid (its vibration is stiff).
 
@@ -549,20 +545,6 @@ Steps in slide
 
 Plot saved as rmsd_plot.ps
 
-Natrindol rings
-
-3: 1
-5: 2 <!--Ask about the strange oxygen-->
-6: 4 (2 are aromatic
-
-so we need to do a selection of ALA LEU VAL ILE PRO PHE MET TRP that are at least 3 armstrongs
-
-((resname ALA or resname LEU or resname VAL or resname ILE or resname PRO or resname PHE or resname MET or resname TRP) as within 3 of resname EJ4) and not hydrogen
-
-((resname ALA or resname LEU or resname VAL or resname ILE or resname PRO or resname PHE or resname MET or resname TRP) as within 3 of resname EJ4) and not hydrogen
-
-resname ALA as within 3 of resname EJ4 and not hydrogen
-
 ## 3. GROMACS
 
 > Date 09/04/2019
@@ -589,25 +571,17 @@ Most of this part is already "done", as the structure we use does not have missi
 
 ### 3.3 Generation of the Topology File
 
-We look into the topology file. It has info ab the molecule. You get 4 each residue the atom tyoe, resnumber atom itself, charge, mass, sum of the charge.
-
-Some extra things it says. We are going to do equilibration by constraining heavy atoms (those that are not hydrogen).
-
-At the bottom there is a list of molecules: we will put more molecules in the next steps there.
+A topology file contains information about the molecule. For each residue we can find the residue number, the atom type and number, charge, mass and sum of the charge. *Other things it says might be the constraints*. The equilibration step will be done by constraining heavy atoms (those that are not hydrogen). Finally, there is a list of molecules at the end, were molecules added in further steps will appear.
 
 ### 3.4 Box Definition and Solvation
 
-This is done with `editconf` and `solvate`. We will use a cubic box, but using a rhombic dodecahedral box would be a better option, as it optimizes the volume. This accelerates computation because there are less solvent molecules.
+This is done with `editconf` and `solvate`. A cubic box will be used, but using a rhombic dodecahedral box would be a better option. That is because the volumen is optimized, accelerating the computation because there are less solvent molecules.
 
-> We make the periodic boundary conditions in this boxes. *I don't know where this comes from, i think it has to do with the size of the box*. Even in assymetric proteins there is always 1 nm of distance between the protein and the box wall.
+> We make the periodic boundary conditions in this boxes. *I don't know where this comes from, I think it has to do with the size of the box*. Even in assymetric proteins there is always 1 nm of distance between the protein and the box wall.
 
-Once we solvate the protein, we can observe in the topology file that a certain amount of solvent has been added to the molecules list.
+Once we solvate the protein, we can observe in the topology file that a certain amount of solvent has been added to the molecules list. The water module we use (SPC model) is used as an standard by GROMACS, but there are other models.
 
-The water module we use (spc model) is used as an standard by GROMACS, but there are other models.
-
-Neutralize the system. Reasons:
-
-* In nature, net charge is neutral, so our system also does it. But how much do we need to add? We can see in the topology file a sum of the charges: its net charge.
+Next, the system needs to be neutralized. Net charge in nature is neutral (charges might concentrate in some spots, but the net is neutral), so the net charge of the simulation system has to be the same. The program knows how many ions to add because the topology file contains a sum of the charges of the system.
 
 This step is not so straightforward. First, it requires to create a `.tpr` file (as in the simulations). It is a binary file that compiles the information of the input. This files are always generated using `grompp`.
 
@@ -621,17 +595,15 @@ We add Na or Cl to neutralize (depends on the net charge. It is also needed to s
 > 
 > Anyway, we can observe the `.gro` file in VMD to check if the ions were added: open it and create a representation with a selection `ions` and draw them as VDW.
 
-In nature net charges are zero. Maybe they concentrate somewhere, or move, but net is zero.
-
 ### 3.5 Minimization
 
-Solvated neutralized system. Reason: we added estimated hydrogens (maybe they need to be minim and also find their right orientation within the system). We also added water and ions.
+Solvated neutralized system. Reason: we added estimated hydrogens (maybe they need to be minimized and also find their right orientation within the system). We also added water and ions. Minimization is important because if you start from high energies, the simulation algorithm explodes.
 
 At the beginning we have to find some positional constraits, which is only heavy tom. During this minim basically you minimize in the 1st step the H atoms. For that you need to use grompp to make a binary file with info from topology, coordinates and the mdp protocol. 
 
-> This protocols can be obtained from publications when we want to repeat what was published, but if not they are kind of dependent on the force field you are using. Most of the values are default values, but you can do whatever you want if you can justify it. The more you imulate, you learn more what he parameters should be. Starting with cutoffs of how many minimizations, this is basically something that is learnt by doing. It is also possible to optimize protocols for types of proteins (i.e. proteases) and use this protocol for all of them. *And I guess you use it as a template, modifying it a bit for specific proteins within the type*.
-
-> Minimization is important because if you start from high energies, the simularion algorithm explodes.
+> This protocols can be obtained from publications when we want to repeat what was published, but if not they are kind of dependent on the force field you are using. Most of the values are default, but you can do whatever you want if you can justify it.
+> 
+> This is something that is learnt by doing, as the more experience doing simulations provides more knowledge on which parameters to use. It is also possible to optimize protocols for types of proteins (i.e. proteases) and use this protocol for all of them. *And I guess you use it as a template, modifying it a bit for specific proteins within the type*.
 
 Some stuff contained in the minimization protocol:
 
@@ -643,17 +615,17 @@ Some stuff contained in the minimization protocol:
 * Cutoffs for non-bonded interactions (electrostatic, VDW), divided in:
 	* Short interactions: treated with the potential energy function, which is 10 A.
 	* Long interctions are treated with the (...) equation, an approximation to solve and converge quickly on the long range using Fourier space.
-* A list of pairs. Always calc bw 2 particles. To speed up calculations there is a step where it checks, makes a list of pairs around a certain atom and checks, puts (...) and then you only need to calculate from this list of pairs the non-bonded interactions. This is updated each timestep. *<I don't understand this part*
+* A list of pairs. Always calc between two particles. To speed up calculations there is a step where it checks, makes a list of pairs around a certain atom and checks, puts (...) and then you only need to calculate from this list of pairs the non-bonded interactions. This is updated each timestep. *<I don't understand this part*
 * Cutoffs scheme: a neighbor searching? just means to the normal cutoff. Srves as a kind of buffer that maybe a atom moves slightly from the cutodd so its buffered a little bit. *neither this one*
 
 **Results of the minimization**
 
 When we run the EM, the outputs are:
 
-* em.log: ASCII-text log file of the EM process
-* em.edr: Binary energy file
-* em.trr: Binary full-precision trajectory
-* em.gro: Energy-minimized structure
+* `em.log`: ASCII-text log file of the EM process
+* `em.edr`: Binary energy file
+* `em.trr`: Binary full-precision trajectory
+* `em.gro`: Energy-minimized structure
 
 We can use `.edr` files to analyse the whole minimization (as it contains the energy of every step). We first convert it to a non-binary format with `energy`. The command always prompts what you want to compute. In this case, we type `10`.
 
@@ -667,19 +639,17 @@ We can see an animation of the minimization by opening the molecule (the last `.
 
 ### 3.6 Equilibration
 
-The equilibration has two steps. For both of them, a `.mdp` protocol and the generation of a binary `.tpr` is needed.
-
-The structure input is the minimized one, with the topology. The protocol nvt.mdp: constant volume and temperature. We want to equilibrate this ensemble.
+The equilibration has two steps. For both of them, a `.mdp` protocol and the generation of a binary `.tpr` is needed. The structure input is the minimized one, with the topology. The protocol is an NVT ensemble (constant volume and temperature) contained in the `nvt.mdp` file.
 
 * We try not to use position restraints on the protein. That means water and ions can move and also actually the side chains of the protein, but not the backbone.
 * Integrator: leap-frog intgrator.
-* 50000 integrations, one integration step we use 2 fs. 2*50000 = we simulate foe 100 ps.
+* 50000 integrations, one integration step we use 2 fs. 2*50000 = we simulate for 100 ps.
 * Output control: how often we save a frame into the trajectory file. Step here refers to fs, so each one picosecond it writes a frame.
 * Same thing for velocities and energy, and the log file.
 * Bond-parameters:
 	* First, say if the simulation is a continuation of other or not (in this case it's not).
 	* Then, (from theory class): we can apply a timestep of 2 fs because we constrain all H bonds, which is the fastest vibration (it is below 2 fs).
-		* When simulating one itration, you have to do it capturing the fastest movement in the systems (H vibration 0.5 fs). We can do the iteration faster by constraining H bonds, so they don't vibrate and are always kept at the same distance. Therefore we define this. Taking off the constraint would mean that we woud go to a lower timestamp and see the bond vibrations. 
+		* When simulating one iteratuon, you have to do it capturing the fastest movement in the systems (H vibration 0.5 fs). We can do the iteration faster by constraining H bonds, so they don't vibrate and are always kept at the same distance. Therefore, we define this. Taking off the constraint would mean that we woud go to a lower timestamp and see the bond vibrations. 
 * Nonbonded-param
 * Cutoff: 1 nm
 * The buffer
@@ -693,12 +663,12 @@ The structure input is the minimized one, with the topology. The protocol nvt.md
 * Periodic boundary conditions
 * Velocity generations: yes, because we start from the beginning, so we want to start the molecule according to the kinetic energy and the temperature (...) Maxwell distribution.
 
-Afte doing this equilibration, we take the result, use `energy` and plot `temperature.xvg`. We want to see if the system has a constant temperature or not.
+After doing this equilibration, we take the result, use `energy` and plot `temperature.xvg`. We want to see if the system has a constant temperature or not.
 
 Now we **generate the NPT ensemble to continue the simulation**, by adding a barostat. There two main changes in the `.mdp` protocol. If we look it:
 
-* It defines that we continue from a previous simulation (the NTP).
-* It has pressure coupling on (it was off before.
+* It defines that we continue from a previous simulation (the NVT).
+* It has pressure coupling on (it was off before).
 
 > The input to do the plot can be found in `3.5_NPT`.
 
@@ -753,9 +723,9 @@ Random forgotten notes:
 
 There are many other options that can be passed to pdb2gmx. Some commonly used ones are listed here:
 
-* -ignh: Ignore H atoms in the PDB file; especially useful for NMR structures. Otherwise, if H atoms are present, they must be in the named exactly how the force fields in GROMACS expect them to be. Different conventions exist, so dealing with H atoms can occasionally be a headache! If you need to preserve the initial H coordinates, but renaming is required, then the Linux sed command is your friend.
-* -ter: Interactively assign charge states for N- and C-termini.
-* -inter: Interactively assign charge states for Glu, Asp, Lys, Arg, and His; choose which Cys are involved in disulfide bonds.
+* `-ignh`: Ignore H atoms in the PDB file; especially useful for NMR structures. Otherwise, if H atoms are present, they must be in the named exactly how the force fields in GROMACS expect them to be. Different conventions exist, so dealing with H atoms can occasionally be a headache! If you need to preserve the initial H coordinates, but renaming is required, then the Linux sed command is your friend.
+* `-ter`: Interactively assign charge states for N- and C-termini.
+* `-inter`: Interactively assign charge states for Glu, Asp, Lys, Arg, and His; choose which Cys are involved in disulfide bonds.
 
 **Step Two: Examine the Topology**
 
@@ -771,16 +741,16 @@ We can examinate the topology file with any text editor.
 
 > The type of water is SPC/E, as we passed `-water spce`. Other typical choices for water include SPC, TIP3P, and TIP4P.
 > 
-> We observe in the file that water is position-restrained, using a force constant (k_pr) of 1000 kJ mol-1 nm-2.
+> We observe in the file that water is position-restrained, using a force constant ($k_{pr}$) of 1000 kJ mol-1 nm-2.
 
 --
 
-> key notes about the [ molecules ] directive:
+> key notes about the `[ molecules ]` directive:
 
 > 1. The order of the listed molecules must exactly match the order of the molecules in the coordinate (in this case, .gro) file.
 > 2. The names listed must match the [ moleculetype ] name for each species, not residue names or anything else.
 > 
-> If you fail to satisfy these concrete requirements at any time, you will get fatal errors from grompp (discussed later) about mismatched names, molecules not being found, or a number of others.
+> If you fail to satisfy these concrete requirements at any time, you will get fatal errors from `grompp` (discussed later) about mismatched names, molecules not being found, or a number of others.
 
 #### Define box and Solvate
 
@@ -789,7 +759,7 @@ We can examinate the topology file with any text editor.
 * We will simulate in an aqueus system (though other solvents can be used).
 * For this we define a box and fill it with solvent. This has two steps.
 
-Define the box dimensions using the editconf module.
+Define the box dimensions using the `editconf` module.
 
 We will use a simple cubic box (but a rhombic dodecahedron is recommended, as its volume is ~71% of the cubic box of the same periodic distance, thus saving on the number of water molecules). The command is:
 
@@ -805,7 +775,7 @@ In this command we say:
 
 > Explanation of the distance:
 > 
-> Since we will be using periodic boundary conditions, we must satisfy the minimum image convention. That is, a protein should never see its periodic image, otherwise the forces calculated will be spurious. Specifying a solute-box distance of 1.0 nm will mean that there are at least 2.0 nm between any two periodic images of a protein. This distance will be sufficient for just about any cutoff scheme commonly used in simulations.
+> Since we will be using periodic boundary conditions, we must satisfy the **minimum image convention**. That is, a protein should never see its periodic image, otherwise the forces calculated will be spurious. Specifying a solute-box distance of 1.0 nm will mean that there are at least 2.0 nm between any two periodic images of a protein. This distance will be sufficient for just about any cutoff scheme commonly used in simulations.
  
 Next, we fill the box with water:
 
@@ -815,43 +785,46 @@ gmx solvate -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top
 
 Explanation of the command:
 
-* The configuration of the protein (-cp) is contained in the output of the previous editconf step
-* The configuration of the solvent (-cs) is part of the standard GROMACS installation.
+* The configuration of the protein (`-cp`) is contained in the output of the previous editconf step
+* The configuration of the solvent (`-cs`) is part of the standard GROMACS installation.
 	* We are using spc216.gro, which is a generic equilibrated 3-point solvent model. You can use spc216.gro as the solvent configuration for SPC, SPC/E, or TIP3P water, since they are all three-point water models.
 * Output: 1AKI_solv.gro
 * We tell the name of the topology file (topol.top) to modify it (it writes the number of waters in the [ molecules ] directive, thi behaviour doesnt happen with non-water solvents).
 
 #### Add ions
 
-* `pdb2gmx`, based on the amino acid composition told us that the protein has a net charge of +8e (last line of your [ atoms ] directive in topol.top).
+* `pdb2gmx`, based on the amino acid composition told us that the protein has a net charge of +8e (last line of your `[ atoms ]` directive in `topol.top`).
 * Ions should be added to the system with the `genion` tool.
 	* It reads through the topology replaces water molecules with the ions that the user specifies.
-	* Its input is called run input file (.tpr), produced by the `grompp` module. It is also used when running the simulation.
+	* Its input is called run input file (`.tpr`), produced by the `grompp` module. It is also used when running the simulation.
 		* `grompp` processes the coordinate file and topology (which describes the molecules) to generate an atomic-level input .tpr. This file contains all the parameters for all atoms in the system.
 
-To produce the .tpr. a .mdp (molecular dynamics parameter file) is needed. grompp assemples the arameters of this file with the coordinates and topology into the tpr file.
+To produce the `.tpr`. a `.mdp` (molecular dynamics parameter file) is needed. `grompp` assemples the parameters of this file with the coordinates and topology into the `.tpr` file.
 
 > mdp file is normally used to run energy minimization or an MD simulation, but in this case is simply used to generate an atomic description of the system.
 
 -- 
 
-> *This file is fownloaded from the tutorial page*
+> *This file is downloaded from the tutorial page*
 > 
-> In reality, the .mdp file used at this step can contain any legitimate combination of parameters. I typically use an energy-minimization script, because they are very basic and do not involve any complicated parameter combinations. Please note that the files provided with this tutorial are intended only for use with the OPLS-AA force field. Settings, particularly nonbonded interaction settings, will be different for other force fields.
+> In reality, the `.mdp` file used at this step can contain any legitimate combination of parameters. I typically use an energy-minimization script, because they are very basic and do not involve any complicated parameter combinations. Please note that the files provided with this tutorial are intended only for use with the OPLS-AA force field. Settings, particularly nonbonded interaction settings, will be different for other force fields.
 
-Building the .tpr file is done with:
+Building the `.tpr` file is done with:
 
+```
 gmx grompp -f ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
+```
 
-hen we pass the file to genion. It will prompt us, choose group 12 SOL (so it doesnt replace parts of the protein with ions):
+Then we pass the file to `genion`. It will prompt us, choose group `12 SOL` (so it doesn't replace parts of the protein with ions):
 
+```
 gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -neutral
+```
 
 The options of this command are:
 
-
 * The input is a structure/state file (-s) as input.
-* The output is a a .gro file (-o).
+* The output is a a `.gro` file (-o).
 * Process the topology (-p) to reflect the removal of water molecules and addition of ions
 * Define positive and negative ion names (-pname and -nname, respectively).
 * Tell genion to add only the ions necessary to neutralize the net charge on the protein by adding the correct number of negative ions (-neutral, which in this case will add 8 Cl- ions to offset the +8 charge on the protein).
@@ -874,8 +847,8 @@ CL                8
 **Step Five: Energy Minimization**
 
 * Ensure that the system has no steric clashes or inappropriate geometry. The structure is relaxed through a process called energy minimization (EM).
-* The process is similar to adding ions: grompp generates a tpr, but instead of using genion we use mdrun (GROMACS MD engine).
-* Again, the input parameter file from gromp is given by the tutorial.
+* The process is similar to adding ions: `grompp` generates a `.tpr`, but instead of using `genion` we use `mdrun` (GROMACS MD engine).
+* Again, the input parameter file for `grompp` is given by the tutorial.
 
 ```
 gmx grompp -f minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
@@ -888,15 +861,15 @@ gmx mdrun -v -deffnm em
 ```
 
 * We run the command in verbose because it can be slow.
-* The -deffnm flag will define the file names of the input and output. 
-	* So, if you did not name your grompp output "em.tpr," you will have to explicitly specify its name with the mdrun -s flag. 
+* The `-deffnm` flag will define the file names of the input and output. 
+	* So, if you did not name your `grompp` output "`em.tpr`" you will have to explicitly specify its name with the `mdrun -s` flag. 
 
-mdrun generates the followng files:
+`mdrun` generates the followng files:
 
-* em.log: ASCII-text log file of the EM process
-* em.edr: Binary energy file
-* em.trr: Binary full-precision trajectory
-* em.gro: Energy-minimized structure
+* `em.log`: ASCII-text log file of the EM process
+* `em.edr`: Binary energy file
+* `em.trr`: Binary full-precision trajectory
+* `em.gro`: Energy-minimized structure
 
 And this, even if we don't use verbose:
 
@@ -909,8 +882,8 @@ Norm of force     =  2.0987490e+01
 
 We can **evaluate** if the EM was successful by:
 
-* Potential energy should be negative, and (for a simple protein in water) on the order of 10-5-10-6, depending on the system size and number of water molecules.
-* The maximum force had a targe, specified at the *minim.mdp - "emtol = 1000.0"*
+* Potential energy should be negative, and (for a simple protein in water) on the order of $10^{-5}$ to $10^{-6}$, depending on the system size and number of water molecules.
+* The maximum force had a target, specified at the *minim.mdp - "emtol = 1000.0"*
 	* indicating a target Fmax of no greater than 1000 kJ mol-1 nm-1. It is possible to arrive at a reasonable Epot with Fmax > emtol. If this happens, your system may not be stable enough for simulation. Evaluate why it may be happening, and perhaps change your minimization parameters (integrator, emstep, etc).
 * Also, the file em.edr contains all energy terms collected by GROMACS during EM. We can analyse it with the energy module:
 
@@ -956,13 +929,13 @@ Equilibration is usually conducted in two phases:
 		* The temperature of the system should reach a plateau at the desired value.
 		* If the temperature has not estabilized, then more time is required.
 		* Typically, 100-150 ps should be enough.
-	* A .mdp file is required for grompp to run (downloaded from tutorial). Some parameters are:
+	* A `.mdp` file is required for `grompp` to run (downloaded from tutorial). Some parameters are:
 		* `gen_vel = yes`: Initiates velocity generation. Using different random seeds (`gen_seed`) gives different initial velocities, and thus multiple (different) simulations can be conducted from the same starting structure.
 		* `tcoupl = V-rescale`: The velocity rescaling thermostat is an improvement upon the Berendsen weak coupling method, which did not reproduce a correct kinetic ensemble.
 		* `pcoupl = no`: Pressure coupling is not applied.
 * Phse 2: NPT or "isothermal-isobaric" ensemble, which more closely resembles experimental conditions.
 	* This stabilizes the pressure (thus also the density) of the system.
-	* Again, a mdp file is needed (and downloaded). It is similar to the nvt.mdp, but has some changes:
+	* Again, a `.mdp` file is needed (and downloaded). It is similar to the `nvt.mdp`, but has some changes:
 		* It has a pressure coupling section which uses the Parrinello-Rahman barostat. 
 		* `continuation = yes`: We are continuing the simulation from the NVT equilibration phase
 		* `gen_vel = no`: Velocities are read from the trajectory (see below).
@@ -992,9 +965,9 @@ gmx grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
 gmx mdrun -deffnm npt
 ```
 
-> We are now including the -t flag to include the checkpoint file from the NVT equilibration; this file contains all the necessary state variables to continue our simulation. To conserve the velocities produced during NVT, we must include this file.
+> We are now including the `-t` flag to include the checkpoint file from the NVT equilibration; this file contains all the necessary state variables to continue our simulation. To conserve the velocities produced during NVT, we must include this file.
 > 
-> The coordinate file (-c) is the final output of the NVT simulation.
+> The coordinate file (`-c`) is the final output of the NVT simulation.
 
 ```
 gmx energy -f npt.edr -o pressure.xvg
@@ -1073,7 +1046,7 @@ We use some of the GROMACS tools in order to analyse the simulation:
 	```
 	
 	* Both time series show the RMSD levels off to ~0.1 nm (1 Å), indicating that the structure is very stable. Subtle differences between the plots indicate that the structure at t = 0 ns is slightly different from this crystal structure. This is to be expected, since it has been energy-minimized, and because the position restraints are not 100% perfect, as discussed previously.
-* With `gyrate` we can measure the radious of fyration (a measure of its compactness).
+* With `gyrate` we can measure the radius of gyration (a measure of its compactness).
 	
 	```
 	gmx gyrate -s md_0_1.tpr -f md_0_1_noPBC.xtc -o gyrate.xvg
@@ -1081,33 +1054,23 @@ We use some of the GROMACS tools in order to analyse the simulation:
 	> Choose group 1 (Protein) for analysis.
 	
 	* Two things can happen:
-		* Maintaina a relatively stable value for R_g: it is stably folded.
-		* R_g changes over time: the protein unfolds.
+		* Maintain a relatively stable value for $R_g$: it is stably folded.
+		* $R_g$ changes over time: the protein unfolds.
 
 
 ## Class 4. GROMACS II
 
 <!--Date: 11/04/2019-->
 
-First we focus a bit on some details, and then we analyse a simulation.
-
-Min questions were about the simulation protocols, so here we go.
-
 ### Minimization Protocol
 
-It is contained in the file `minim.mdp`.
-
-#### Integrator
-
-The integrator is the algorithm that performs the minimization. They look through the energetic landscape by different iterations. In each of them, they calculate the potential energy by summing all the energies of the system:
+The minimization protocol is contained in the file `minim.mdp`. One of the parameters that is included is the **integrator**, which is the algorithm that performs the minimization. It looks through the energetic landscape by different iterations. In each of them, it calculates the potential energy by summing all the energies of the system:
 
 $$
 E_{tot}=E_{str}+E_{bend}+E_{tor}+E_{vdw}+E_{ele}+...
 $$
 
-The steepest descent minimizer is a first order method, which gradually changes the coordinates of atoms as moving the system closer to the minimum.
-
-It looks for local minimums. It starts in a random point, so it might fall in the global minimum or in a local minimum.
+This protocol uses the **steepest descent minimizer**, a first order method, which gradually changes the coordinates of atoms as moving the system closer to the minimum. It looks for local minima starting at a random point. This means that it might actually fall in the global minimum.
 
 This algorithm can be explained with a 2D simplification, in which what it does is similar to a line search:
 
@@ -1118,13 +1081,13 @@ This algorithm can be explained with a 2D simplification, in which what it does 
 
 The segment selection is repeated until the lowest point is found. When this happens, a perpendicular line that crosses the first through this point is drawn, and the three point strategy is done again.
 
-Ths strategy is fast, but is forced to make right-angled turns at each point even though it might not be the best  route to the minimum. This acceptable in narrow/steep minimums, as it can go directly to the bottom.
+Ths strategy is fast, but is forced to make right-angled turns at each point even though it might not be the best route to the minimum. This acceptable in narrow/steep minimums, as it can go directly to the bottom.
 
 > Gives undesirable properties in long narrow valley <!--Doubt-->
 
 > Each iteration depicted by arrows in slide 11.
 
-For shallow minimums, the conjugate gradient minimization is more appropiate. It is a bit more computationally expensive, as it stores data from previous iterations (history gradient information: performs calculations following a gradient). This information is used to choose a direction, which is used to go more directly for the local minimum.
+For shallow minimums, the *conjugate gradient minimization* is more appropiate. It is a bit more computationally expensive, as it stores data from previous iterations (history gradient information: performs calculations following a gradient). This information is used to choose a direction, which is used to go more directly for the local minimum.
 
 ### NVT Equilibration Protocol
 
@@ -1132,7 +1095,7 @@ It is contained in the `nvt.mdp` file.
 
 #### Integrator
 
-The integrator in this case uses a leap-frog algorithm. During the cycle of each iteration of the simulation, we have to obtain both the coordinates and the velocities of the atoms. This algorithm calculates each at different times:
+The integrator in this case uses a **leap-frog algorithm**. During the cycle of each iteration of the simulation, we have to obtain both the coordinates and the velocities of the atoms. This algorithm calculates each at different times:
 
 * The coordinates are calculated at each time-step (in the tutorial, 2 fs).
 * The velocities are calculated in the half-time.
@@ -1145,7 +1108,7 @@ The protocol defines how the data is stored.
 
 The coordinates are written to `.gro` files at each timestep. If a coordinates file was generated for each step, there would be a lot of files, so they are combined in a trajectory file (`.trr` or `.xtc` in the case of GROMACS, `.dcd` in NAMD).
 
-> We write out the coordinates in each file, 2fs each gro file corresponds to 1 ps, so each gro is a frame or step. The time of the ste depended on the frequencies.
+> We write out the coordinates in each file, 2 fs each gro file corresponds to 1 ps, so each gro is a frame or step. The time of the ste depended on the frequencies.
 
 Other files in the output are the energy file (binary) and the log file.
 
@@ -1155,9 +1118,7 @@ The vibrations of the hydrogen bonds are the fastest of the system. By constrain
 
 #### Nonbonded Settings
 
-Calculating non-bonded interactions in too much detail is computationally very expensive for for big systems such as proteins or in fields such as drug design (tough it is possible to do it with small systems). Then, a cutoff scheme is used.
-
-The cutoff scheme of this protocol is Verlet, and it performs a buffered neighbor search within certain cutoffs:
+Calculating non-bonded interactions in too much detail is computationally very expensive for for big systems such as proteins or in fields such as drug design (tough it is possible to do it with small systems). Then, a cutoff scheme is used. In this protocol it is called **Verlet**, and it performs a buffered neighbor search within certain cutoffs:
 
 * Coulomb for short-range electrostatic interactions.
 * VDW interactions.
@@ -1172,7 +1133,7 @@ During simulations, one pair of atoms is above the cutoff, so is not in the list
 
 #### Electrostatics
 
-For long-range electrstatic interactions, calculations are performed in a Fourier space (so it is an approximation).
+For long-range electrostatic interactions, calculations are performed in a Fourier space (so it is an approximation).
 
 > In the image, positive charges are red, and you see how actually the PMD density looks like, so its an approx.
 > 
@@ -1199,7 +1160,7 @@ When starting the simulation atoms do not have velocities yet. They are assigned
 
 Velocities are coupled to temperature (the higher, the faster and viceversa). This doesn't mean that at a certain temperature all molecules have the same velocity: we observe that they correspond to a distribution: maybe some molecules are slower and others way faster, but most of them are at an average velocity (or closer to it).
 
-In the following image we observe how the maxwell distribution is for two samples at different temperatures:
+In the following image we observe how the Maxwell distribution is for two samples at different temperatures:
 
 * Each follows a different distribution.
 
@@ -1211,8 +1172,8 @@ In the simulation, the velocities are assigned based on the Maxwell distribution
 * Cold temp: you would have a certain distr, 2 molecules are very slow and 2 very high, the average velocity lies whatever and the higher, the better c_cold and v_warm is the average. Most molecules are on the average.
 	* As the system is closed, the number of molecules is limited. There is a top to the molecules in the graph of the distr bc we work in closed systems.
 	* So we assign (for xample, to the solvent the average speed of the maxwell distr). Certain temp doesnt mean that the atom has just one velocity, we have to look at the distr of all molecules.
-	* Here we use it for assigning velocities, but if you go further and rescale velocities then you still use the distr to be sure that all the system follows a normal distribution.  In the next step you collect the velocities, so they are not reassigned.
-	* gen_seed is random, means the vel, the distr, the average vel fulfilled, but it could be that  an atom is faster than other. This makes sure that if yu start form the same system the you can deviate into diff firection and evolve it into diff directions  which we like to see, because better for cnformation space.
+	* Here we use it for assigning velocities, but if you go further and rescale velocities then you still use the distr to be sure that all the system follows a normal distribution. In the next step you collect the velocities, so they are not re-assigned.
+	* gen_seed is random, means the vel, the distr, the average vel fulfilled, but it could be that an atom is faster than other. This makes sure that if you start from the same system then you can deviate into diff direction and evolve it into diff direction  which we like to see, because better for conformation space.
 	* The assignment of vel is not the same for a heavy or light atom: the average velocity is proportional to sqrt(boltzmann*T/m), so the heavier, the slower.
 
 > If we had a system with 5 molecules, maybe 1 would be slower. Increasing the temperature would increase the velocities, but the slower one might still be slower than the others.
@@ -1260,14 +1221,11 @@ The RMSD goes around 1.2, which is normal for a system. It doesn't have big conf
 
 **Average RMSD per residue**
 
-The plot we obtained is an average for all backbone atoms. Now we wold like to see *inhibitor region of the protein*, the prot has a chain of residues (from 1 to 100) we want  to see for each residue what is the RMSD. We can define regions that are more flexible.
+The plot we obtained is an average for all backbone atoms. Now we wold like to see *inhibitor region of the protein*, the protein has a chain of residues (from 1 to 100) we want to see for each residue what is the RMSD. We can define regions that are more flexible.
 
-Calculating the average rmsd is done by looking at each frame (ref frame is usually the first one).
+For this, one frame is assigned as a reference, and the rest of the frames are compared to this one to calculate the average RMSD. Usually the first frame is used as the reference, but any other can be chosen. 
 
-We want to find the average RMSD over time of each residue in the protein. Again, we will consider the first frame as the reference, so the second frame is compared to the first, checks how much the residue changed and puts an RMSD. Also for the third, and so.
-
-> It doesnt matter which frame is the reference, but we always need to compre to the reference.
-> 
+We want to find the average RMSD over time of each residue in the protein. Again, we will consider the first frame as the reference and compare the rest of the frames to that one.
 
 We use a script that stores data and contains a function that you use to calc the rmsd of the residue over time. To use it, we need to define our selection (what you want to calculate the rmsd over). It is defined in the slide.
 
@@ -1305,7 +1263,6 @@ set sel_resid [[atomselect top "protein and CA"] get resid]
 > The list here is smaller, as we are selecting just alpha carbons.
 
 > **View more about the residues by looking at slide 35**
-> 
 
 Once we set the selection, we pass it to the function with function name + structure + selection:
 
@@ -1347,7 +1304,7 @@ This can also be done with the protein.
 
 **Electrostatic Interactions**
 
-Salt bridges have an important contribution to protein stability. They can be found with Extensions > Analysis > Salt Bridges.
+Salt bridges have an important contribution to protein stability. They can be found with `Extensions > Analysis > Salt Bridges`.
 
 This generates a series of files with information about the salt bridges, which can be plotted.
 
@@ -1369,26 +1326,9 @@ We want to know if the pocket is hydrophobix or polar. To do this:
 
 --
 
-> Seems some residues she selects are:
-> 
-> * trp28, leu56, trp 108, , 31, 8, 12
-> 
-> The residues I select are: trp108, leu56, met 12, ile 55, , glu 35, ala 31, trp28
-> 
-> ile 55 no tan cerca
-> 
-
-List of hydrophobic residues: ALA LEU VAL ILE PRO PHE MET TRP
-
-trp108 (A), leu56 (A), met 12, ile 55, , glu 35, ala 31, trp28
-
-The pocket is hydrophobic
-
-
 > Nice pocket to target. when you see water in a hole you expect certain feature. If it is for instance hydrophobic the ligand dispaces waters and we get a nice affinity
 
-
-put waters areound in a repr to see how they go in and out
+put waters around in a repr to see how they go in and out
 
 water and same residue as within 3 of resid (update selection for every frame and color every frame)
 
@@ -1413,7 +1353,7 @@ VMD is used to prepare the protein ([3PBL](https://www.rcsb.org/structure/3pbl))
 
 When we open it, we observe that it has two receptors. Normally, the one that has less missing segments/atoms structure is taken. We will keep chain A, as there is not much difference.
 
-> Represent chain A as NewCartoon to see which one it is.
+> Represent chain A as *NewCartoon* to see which one it is.
 
 To save the chain into another file, we open the TkConsole:
 
@@ -1423,18 +1363,15 @@ $sel writepdb 3pdbl_chainA.pdb
 ```
 
 > This script just takes the chain A of structure marked as top. The `atomselect` key is used to select parts of a structure. The selection is saved into a variable, which later is used to generate the PDB.
-> 
 
-We load the new file and observe it:
-
-So the chain A, after loading, will look like this:
+We load the new file and observe it. The chain A now looks like this:
 
 <img src="msi-notes.assets/5.3.png" alt=""
 	title="" width="400"/>
 
 It still contains the T4 lysozime (introduced into the receptor to facilitate crystallisation).
 
-In order to remove it, we use again Tk, but first we need to know which residues are the lysozime and with the chain. The residue IDs can be checked with the Sequence Viewer. In it, we can see how the residue number goes from 221 to 1002 suddently: that is the lysozyme. *Prot goes *
+In order to remove it, we use again Tk, but first we need to know which residues are the lysozime and with the chain. The residue IDs can be checked with the Sequence Viewer. In it, we can see how the residue number goes from 221 to 1002 suddently: that is the lysozyme.
 
 <img src="msi-notes.assets/5.4.png" alt=""
 	title="" width="500"/>
@@ -1449,8 +1386,8 @@ set sel [atomselect top "resid < 1000 or resid > 1200"]
 
 $sel writepdb 3pbl_chainA_cut.pdb
 ```
+
 > We know thay the protein goes until residue 222 and then restarts at 319, and also, over 1200 is not the lysozime.
-> 
 
 The resulting structure is shown in the image, but if we create a VDW representatin with "not protein" as selection, we will see small molecules:
 
@@ -1498,13 +1435,11 @@ The procedure starts by going to the CHARMM-GUI membrane builder and uploading t
 
 **PDB Manipulation**
 
-The gap that we were talking about before generates two N and C-terminal ends. To avoid charged artifacts with them, they are capped with ACE and CT3, so they remain neutral.
-
-The disulfide bonds need to be identified. To know where they are, we go back to VMD:
+The gap that we were talking about before generates two N and C-terminal ends. To avoid artifacts related to charges the ends are capped with *ACE* and *CT3*, so they remain neutral. Next, the disulfide bonds need to be identified. To know where they are, we go back to VMD:
 
 * Select all cysteine residues
-* Draw method: licorice
-* Color: by name
+* Draw method: *Licorice*.
+* Color: *by name*.
 
 If we remove the rest of representations, we will see that some cysteines are together: those are the bonds. We can select the atoms to see the residue ID.
 
@@ -1520,7 +1455,7 @@ Orienting the protein because...
 
 In the case of GPCRs, we use "Align the First Principal Axis Along Z".
 
-Lastly, the D3R has a pore were small ligands bind. This has to be filled with water. We do it with the option *Using protein geometry*.
+Lastly, the *D3R* has a pore were small ligands bind. This has to be filled with water. We do it with the option *Using protein geometry*.
 
 <img src="msi-notes.assets/5.charmm-5.png" alt=""
 	title="" width="500"/>
@@ -1546,7 +1481,7 @@ When the calculation is performed, two plots and some characteristics are return
 In this step, we choose the box type and its size:
 
 * The box will be rectangular.
-* Length of Z will be based on a water thickness of 12 (A or nm??<!--doubt-->. This is done to maintain the system as small as possible.
+* Length of Z will be based on a water thickness of 12 A. This is done to maintain the system as small as possible.
 * Length of X and Y will be based on the ratios of lipid components, but we need to guess a size. We put 80 (80x80).
 
 Next, there is a table with lipids, wich contains lipid types. The upperleaflet and lowerleaflet ratios refer to each side of the membrane. We choose POPC as the lipid, with a 1-1 ratio (*same amount of lipids on each side*).
@@ -1569,15 +1504,8 @@ If we click on `step3_packing.pdb`, we can see the result so far.
 > There are two popular methods commonly used to build a realistic protein/membrane complex. In the first method, lipid-like pseudo atoms are first distributed around a protein and then replaced by lipid molecules one at a time [19]–[21]. Individual lipid molecules are randomly selected from a lipid library that contains various conformations of lipid molecules. This method allows one to easily control the system size and the number of lipid molecules while it generates a lipid bilayer nicely packed around the protein. In the second method, a hole is first created in a pre-equilibrated lipid bilayer and then the membrane protein is inserted into the hole [22]–[24]. In general, weak repulsive radial forces perpendicular to the membrane normal are applied to a lipid bilayer until the hole is large enough to accommodate the protein. This method provides a well-equilibrated lipid bilayer, and one might expect less equilibration time than in the first method. For the sake of convenience, the first method is called the “replacement method” and the second method is called the “insertion method” hereinafter. Although both methods are well explained in the literature [19]–[24], considerable efforts and experiences with MD simulation software are required to build a realistic protein/membrane system.
 > 
 > From [this paper](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000880)
-> 
 
-Q2: 
-
-
-
-----
-
-Check lipid penetration
+**Check lipid penetration**
 
 The protein surface penetration check finds the lipid tails that go beyond the protein surface, and the lipid ring penetration check detects the lipid tails that pass through the cyclic groups (e.g., cholesterol ring) in the simulation systems. Energy minimization can resolve many of these bad contacts, but one might need to visually check the following lipid molecules to ensure the following contacts are resolved. The user can regenerate the lipid bilayer if necessary.
 Protein surface penetration:
@@ -1587,9 +1515,7 @@ Lipid ring penetration:
 No lipid ring penetration is found.
 Building Ion and Waterbox
 
-Membrane components are generated. Due to time constrains, we first generate the lipid bilayer then generate ions and the water box. Click "Next Step" to generate ions and the water box.
-
-----
+Membrane components are generated. Due to time constrains, we first generate the lipid bilayer then generate ions and the water box. Click *Next Step* to generate ions and the water box.
 
 **Define equilibration conditions** <!--Before min 1:05-->
 
@@ -2146,11 +2072,11 @@ then plot it: double well
 
 Computer simulations of biomolecular systems have grown rapidly over the past few decades: from small molecules in vacuum (>20 atoms) to large protein complexes in a solvated lipid bilayer environment (>20000 atoms). 
 
-However, despite its success, MD simulations are still limited in two regards:
+However, MD simulations are still limited in two regards despite its success:
 
 * Inaccuracy of force fields: 
-	* Force fields are simplifications based on collections of experimental data and ab initio calculations of how the system behaves.
-	* Over the years have been refined, as this was needed to achieve longer simulation times with larger systems.
+	* Force fields are simplifications based on collections of experimental data and *ab initio* calculations of the system behaviour.
+	* Over the years they have been refined, as this was needed to achieve longer simulation times with larger systems.
 	* They describe the main energy function, but still can have some inaccuracy with certain kinetics.
 	* Note that the stability of a system with time depends on its size: the smaller they are, the longer they can be simulated.
 * High computational cost: it is needed half a year to simulate on the millisecond level, unless a supercomputer is used. 100 μs simulation of relatively small systems (approximately 25,000 atoms) running on state-of-the-art computing architecture requires a month of computation to complete.
@@ -2160,26 +2086,26 @@ Biological molecules are known to have rough energy landscapes, with many local 
 <img src="msi-notes.assets/8.1.png" alt=""
 	title="" width="500"/>
 	
-It making it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations. Replication can be used to escape those minima, but the difficulty increases when the event you want to observe is rare.
+These landskapes make it easy to fall into a non-functional state that is hard to jump out of in most conventional simulations. Replication can be used to escape those minima, but the difficulty increases when the event you want to observe is rare.
 
 Also, we are not only interested in the global minimum, but rather in the ones that are biologically functional, as they can be relevant events. Examples of this are:
 
 * More than one pathway to arrive to the same conformation: a main one and other biologically possible ones that are less used. Gathering information about those could be interesting.
 * In case of the transport through membranes, channels and transporters have to undergo large conformational changes in the course of gating substrates.
 
-But sampling those conformational states is difficult because of the high energy barriers, and limits our ability to analyse and reveal functional properties of the systems being examined.
+But sampling those conformational states is difficult because of the high energy barriers, and limits our ability to analyze and reveal functional properties of the systems being examined.
 
 The following image shows one of those states:
 
 <img src="msi-notes.assets/8.2.png" alt=""
 	title="" width="500"/>
 
-In conclusion, escaping local minima is complicated and time consuming, and straightforward MD simulations cannot handle this. Algorithms that are able to sample conformational states are needed. They are divided in two categories:
+In conclusion, escaping local minima is complicated and time consuming, and straightforward MD simulations cannot handle it. Algorithms that are able to sample conformational states are needed, and they are divided in two categories:
 
 <img src="msi-notes.assets/8.3.png" alt=""
 	title="" width="500"/>
 
-> CVs are collective variables, which are used by most sampling algorithms to describe the progress of a pathway. An example is "distance between the ends".
+> CVs are collective variables, which are used by most sampling algorithms to describe the progress of a pathway. An example is *distance between the ends*.
 
 ### CV-Dependent Methods
 
@@ -2196,14 +2122,14 @@ In the following image, the green rectangle is a phase space, and the yellow is 
 <img src="msi-notes.assets/8.4.png" alt=""
 	title="" width="350"/>
 
-* It is possible to sample the green it entirely because it is small. This represents how most molecular systems are.
+* It is possible to sample the green phase space entirely because it is small. This represents how most molecular systems are.
 * Sampling a part of the yellow doesn't allow to arrive to green space, as they are not connected. This applies in cases such as bond breaking. Quantum mechanics allows to define bond breaks, unlike with molecular mechanics.
 
 Note that the big space could be subsetted into smaller spaces to solve the problem, but then it is not a single sample, so it cannot be considered ergodic.
 
 **Procedure of Metadynamics**
 
-We start by defining the CV and plotting the energy landscape of the system. In the example below we see a structure that was crystallised at a stage that is a local minimum (1st graph).
+We start by defining the collective variable(s) and plotting the energy landscape of the system. In the example below we see a structure that was crystallised at a stage that is a local minimum (first graph).
 
 <img src="msi-notes.assets/8.5.png" alt=""
 	title="" width="400"/>
@@ -2212,13 +2138,13 @@ After a certain time defined in the simulation protocol (for example, after 3000
 
 When this time passes, a defined amount of energy is added. This energy is not just a value (which would be represented in the plot as a vertical line), but rather a gaussian distribution with a defined height and width. That is why the increases of energy are called hills.
 
-As we add a hill, the potential energy function is increased. If we added just one, the structure would fall to the minimum again, then it would climb again and after 6 ps, fall again. To prevent this, more hills are added until the vale is filled and the structure cannot go to the bottom. The consequence of this is that the energy barrier is decreased. We keep the information about the number of hills added and their shape, so we know how much energy we are adding to the landscape. *I guess this means that we don't end up with a biased landscape*.
+As we add a hill, the potential energy function is increased. If we added just one, the structure would fall to the minimum again, then it would climb again and after 6 ps, fall again. To prevent this, more hills are added until the vale is filled and the structure cannot go to the bottom. The consequence of this is that the energy barrier decreases. The information about the number of hills added and their shape is kept to know how much energy has been added to the landscape. *I guess this means that we don't end up with a biased landscape*.
 
 As the hills remain in the vale once it has been filled it prevents that it is resampled. That's why it is said that this method **introduces memory to the system**.
 
 Defining the shape of the hills can be done with big energy values, allowing to get a rough idea of the landscape. To be more accurate, smaller values are used. The bigger the value, the faster a vale is filled.
 
-Convergence in metadynamics is achieved when everything has flattened out, so any hill you add results in staying in the same place. In papers, convergence is demonstrated by showing the last plots of the profile: if they are the same, convergence is achieved. It is also possible that maybe one part has converged and others not. In that case, it would be acceptable to say that there is convergence if we are only interested in that part.
+Convergence in metadynamics is achieved when everything has flattened out, so any hill you add results in staying in the same place. In papers, convergence is demonstrated by showing the last plots of the profile: if they are the same, convergence is achieved. It is also possible that maybe one part has converged and others not. If we are interested only in that part it would be acceptable to say that there is convergence.
 
 The procedure is computationally fast, as 6 ps is nothing, while with unbiased simulations we could never scape the minimum. At the end, we will have information about the whole energy landscape.
 
@@ -2284,7 +2210,7 @@ In the case of temperature, the fact that it increases can make the simulation o
 
 In an efficient run, all trajectories will experience changing of the exchange variable value. At each value for the exchange variable, the trajectories will be discontinuous, but follow a proper Boltzmann distribution for the specific value being exchanged.
 
-The main advantages of this method are a gain of flexibility, overcoming ergodicity, and also a good parallelisation.
+The main advantages of this method are a gain of flexibility, overcoming ergodicity, and also a good parallelization.
 
 Applications:
 
@@ -2356,11 +2282,11 @@ resname DSCP
 
 both as points, make them bigger, etc
 
-## C11. Interactive and Steered Molecular Dynamics
+## 11. Interactive and Steered Molecular Dynamics
 
 As replica exchange requires a recompilation of GROMACS, adding a layer difficulty, we will do steered molecular dynamics (SMD) instead.
 
-SMD is applied to processes such as the unfolding pathways of proteins. Forces are applied to one side of the molecule, and its behaviour can be analysed. SMD allows the calculations of the **potential of mean force (PMF)** from the trajectories obtained.
+SMD is applied to processes such as the unfolding pathways of proteins. Forces are applied to one side of the molecule, and its behaviour can be analyzed. SMD allows the calculations of the **potential of mean force (PMF)** from the trajectories obtained.
 
 Also, with **interactive molecular dynamics (IMD)** we are able to apply the forces to the molecule and see its reaction in real time.
 
@@ -2368,7 +2294,7 @@ For this class, we will perform the simulation in vacuum so it can be executed i
 
 ![](msi-notes.assets/11.1.png)
 
-### IMD
+### 11.1 Interactive Molecular Dynamics
 
 The directory contains the following files:
 
@@ -2413,13 +2339,13 @@ vmd -e imd.vmd
 
 This line loads the molecule into VMD and shows the ribbon and CPK representations. The alpha carbon of the first residue is colored in orange: that one is the fixed atom.
 
-Next, we go to Extensions > Simulation > IMD Connect (NAMD) and we type localhost as hostname and 3000 as port. When clicking on Connect, the simulation will start.
+Next, we go to `Extensions > Simulation > IMD Connect (NAMD)` and we type localhost as hostname and 3000 as port. When clicking on Connect, the simulation will start.
 
-We can apply forces to stretch the molecule with Mouse > Force > Atom and then click and drag on an atom in the opposite end of the one with the orange atom. A red arrow will appear, which represents the magnitude and direction of the force that is being applied.
+We can apply forces to stretch the molecule with `Mouse > Force > Atom` and then click and drag on an atom in the opposite end of the one with the orange atom. A red arrow will appear, which represents the magnitude and direction of the force that is being applied.
 
 We can stretch the molecule to half of its original length. If when it arrives to that point we remove the force (by middle-clicking on the atom to which the force is being applied), we will see how the molecule holds back.
 
-### SMD
+### 11.2 Steered Molecular Dynamics
 
 IMD is useful to explore the system, but SMD allows a more systematic way to apply forces and analyse the system.
 
@@ -2449,7 +2375,7 @@ Those external forces design that:
 * The other end (the capping N atom at the C-terminus) is constrained to a point that moves along the z-axis from 13 Å to 33 Å with a constant speed of 1 Å/ps.
 * An harmonic potential with a force constant of 7.2 kcal/ (molÅ^2 ) is used for the constraints. <!--Doubt: to a particular atom?-->
 
-In other words, we want the molecule to move from `(0, 0, 13)` to `0, 0, 33` by one A per picosecond, meaning that the full extension will take 20 ps. So we see that what is defined is the end point and the speed to arrive there, not the force itself.
+In other words, we want the molecule to move from `(0, 0, 13)` to `(0, 0, 33)` by 1 Å/ps, meaning that the full extension will take 20 ps. So we see that what is defined is the end point and the speed to arrive there, not the force itself.
 
 Next, the simulation is run with the following command:
 
@@ -2482,7 +2408,7 @@ The first thing we want to observe is how the hydrogen bonds are broken in the h
 	* Angle Cutoff: 40
 	* Line Thickness: 10
 
-Then, the timeline tool (Extension > Analysis > Timeline) is used to follow the hydrogen bonding.
+Then, the timeline tool (`Extension > Analysis > Timeline`) is used to follow the hydrogen bonding.
 
 **Analysis of the SMD trajectory**
 
@@ -2532,7 +2458,7 @@ set plot1 [multiplot -x $t -y $z -plot]
 $plot1 add $t $c -plot
 ```
 
-Here, we observe two lines: one is a straight line, which represents the distance between the two constraint points, and the other is the actual extension. This is the pulling velocity and how the molecule adapted to the force, and it usually lags behinf the straight line. This is due to the fact that before it reaches that distance, the next force is applied. By decreaing the speed, we would give more time to the molecule to reach that arget value (as what we define are speeds, not forces).
+Here, we observe two lines: one is a straight line, which represents the distance between the two constraint points, and the other is the actual extension. This is the pulling velocity and how the molecule adapted to the force, and it usually lags behind the straight line. This is due to the fact that before it reaches that distance, the next force is applied. By decreaing the speed, we would give more time to the molecule to reach that target value (as what we define are speeds, not forces).
 
 There are times where the force actually moves the molecule past the value of distance we wanted for that timestep. Then, the system tries to adapt by applying a negative force, so it goes back.
 
